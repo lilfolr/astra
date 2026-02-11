@@ -24,3 +24,5 @@ queue_rules:
     checks_timeout: 54 m 21 s
     max_check_retries: 2
     update_method: rebase
+merge_queue:
+  max_parallel_checks: 1
