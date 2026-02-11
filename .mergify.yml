@@ -13,11 +13,6 @@ merge_protections:
       - base = main
     success_conditions:
       - "#commits-behind <= 3"
-  - name: Require approval (label)
-    if:
-      - base = main
-    success_conditions:
-      - label = merge
 queue_rules:
   - name: Default
     merge_method: squash
