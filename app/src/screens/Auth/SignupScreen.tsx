@@ -7,33 +7,39 @@ import SciFiBackground from '../../components/SciFiBackground';
 import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
 import Colors from '../../theme/colors';
-import { Mail, Lock, LogIn, ArrowLeft } from 'lucide-react-native';
+import { Mail, Lock, UserPlus, ArrowLeft } from 'lucide-react-native';
 import auth from '@react-native-firebase/auth';
 
-type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+type SignupScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Signup'>;
 
 interface Props {
-  navigation: LoginScreenNavigationProp;
+  navigation: SignupScreenNavigationProp;
 }
 
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
+const SignupScreen: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password.');
+  const handleSignUp = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
       return;
     }
 
     setLoading(true);
     try {
-      await auth().signInWithEmailAndPassword(email, password);
-      // Navigation is handled by auth state change in App.tsx
+      await auth().createUserWithEmailAndPassword(email, password);
+      // navigation.navigate('CreateProfile'); // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
-      Alert.alert('Authentication Failed', error.message);
+      Alert.alert('Registration Failed', error.message);
     } finally {
       setLoading(false);
     }
@@ -54,12 +60,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.backButton}
               icon={<ArrowLeft color={Colors.white} size={20} />}
             />
-            <Text style={styles.headerTitle}>SECURE AUTHENTICATION</Text>
+            <Text style={styles.headerTitle}>CREW REGISTRATION</Text>
           </View>
 
           <View style={styles.form}>
             <Text style={styles.description}>
-              Enter your credentials to establish a new fleet uplink.
+              Initialize a new neural link to join the Astra Fleet.
             </Text>
 
             <SciFiInput
@@ -81,16 +87,25 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
             />
 
+            <SciFiInput
+              label="Confirm_Access_Key"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+              icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
+            />
+
             <View style={styles.actions}>
               <SciFiButton
-                title={loading ? "Authenticating..." : "Board Ship"}
-                onPress={handleLogin}
+                title={loading ? "Registering..." : "Initialize Link"}
+                onPress={handleSignUp}
                 variant="primary"
-                icon={<LogIn color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
               />
               <SciFiButton
-                title="Register New Account"
-                onPress={() => navigation.navigate('Signup')}
+                title="Already have a link? Sign In"
+                onPress={() => navigation.navigate('Login')}
                 variant="secondary"
               />
             </View>
@@ -145,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;

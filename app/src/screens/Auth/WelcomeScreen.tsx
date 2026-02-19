@@ -71,14 +71,19 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         {/* Action Buttons */}
         <View style={styles.actions}>
           <SciFiButton
-            title="Make a New Fleet"
+            title="Initialize New Fleet"
             variant="primary"
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => navigation.navigate('Signup')}
           />
           <SciFiButton
             title="Join Existing Fleet"
             variant="secondary"
             onPress={() => navigation.navigate('JoinFleet')}
+          />
+          <SciFiButton
+            title="Commander Sign-In"
+            variant="secondary"
+            onPress={() => navigation.navigate('Login')}
           />
         </View>
 
