@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
@@ -27,43 +27,49 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.keyboardView}
         >
-          <View style={styles.header}>
-            <SciFiButton
-              title=""
-              onPress={() => navigation.goBack()}
-              variant="secondary"
-              style={styles.backButton}
-              icon={<ArrowLeft color={Colors.white} size={20} />}
-            />
-            <Text style={styles.headerTitle}>FLEET UPLINK</Text>
-          </View>
-
-          <View style={styles.form}>
-            <Text style={styles.description}>
-              Enter the unique access code provided by your Fleet Commander to join an existing starship.
-            </Text>
-
-            <SciFiInput
-              label="Identity_Token"
-              placeholder="ACCESS CODE"
-              value={accessCode}
-              onChangeText={setAccessCode}
-              autoCapitalize="characters"
-              icon={<Key color={Colors.cyan} size={18} opacity={0.5} />}
-            />
-
-            <View style={styles.actions}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.header}>
               <SciFiButton
-                title="Board Ship"
-                onPress={handleJoin}
-                variant="primary"
-                icon={<Ship color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                title=""
+                onPress={() => navigation.goBack()}
+                variant="secondary"
+                style={styles.backButton}
+                icon={<ArrowLeft color={Colors.white} size={20} />}
               />
+              <Text style={styles.headerTitle}>FLEET UPLINK</Text>
             </View>
-          </View>
+
+            <View style={styles.form}>
+              <Text style={styles.description}>
+                Enter the unique access code provided by your Fleet Commander to join an existing starship.
+              </Text>
+
+              <SciFiInput
+                label="Identity_Token"
+                placeholder="ACCESS CODE"
+                value={accessCode}
+                onChangeText={setAccessCode}
+                autoCapitalize="characters"
+                icon={<Key color={Colors.cyan} size={18} opacity={0.5} />}
+              />
+
+              <View style={styles.actions}>
+                <SciFiButton
+                  title="Board Ship"
+                  onPress={handleJoin}
+                  variant="primary"
+                  icon={<Ship color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                />
+              </View>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </SciFiBackground>
@@ -76,7 +82,11 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
