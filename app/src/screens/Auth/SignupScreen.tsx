@@ -36,9 +36,10 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(true);
     try {
       await auth().createUserWithEmailAndPassword(email, password);
-      // navigation.navigate('CreateProfile'); // Navigation will be handled by auth state change in App.tsx
+      // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
+      // FIXME: Dont error on stuff like weakpassword
       Alert.alert('Registration Failed', error.message);
     } finally {
       setLoading(false);
