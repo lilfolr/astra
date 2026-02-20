@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
@@ -50,67 +50,73 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.keyboardView}
         >
-          <View style={styles.header}>
-            <SciFiButton
-              title=""
-              onPress={() => navigation.goBack()}
-              variant="secondary"
-              style={styles.backButton}
-              icon={<ArrowLeft color={Colors.white} size={20} />}
-            />
-            <Text style={styles.headerTitle}>CREW REGISTRATION</Text>
-          </View>
-
-          <View style={styles.form}>
-            <Text style={styles.description}>
-              Initialize a new neural link to join the Astra Fleet.
-            </Text>
-
-            <SciFiInput
-              label="Fleet_Admin_Email"
-              placeholder="admin@astra.link"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              icon={<Mail color={Colors.cyan} size={18} opacity={0.5} />}
-            />
-
-            <SciFiInput
-              label="Access_Key"
-              placeholder="••••••••"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
-            />
-
-            <SciFiInput
-              label="Confirm_Access_Key"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
-            />
-
-            <View style={styles.actions}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.header}>
               <SciFiButton
-                title={loading ? "Registering..." : "Initialize Link"}
-                onPress={handleSignUp}
-                variant="primary"
-                icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
-              />
-              <SciFiButton
-                title="Already have a link? Sign In"
-                onPress={() => navigation.navigate('Login')}
+                title=""
+                onPress={() => navigation.goBack()}
                 variant="secondary"
+                style={styles.backButton}
+                icon={<ArrowLeft color={Colors.white} size={20} />}
               />
+              <Text style={styles.headerTitle}>CREW REGISTRATION</Text>
             </View>
-          </View>
+
+            <View style={styles.form}>
+              <Text style={styles.description}>
+                Initialize a new neural link to join the Astra Fleet.
+              </Text>
+
+              <SciFiInput
+                label="Fleet_Admin_Email"
+                placeholder="admin@astra.link"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                icon={<Mail color={Colors.cyan} size={18} opacity={0.5} />}
+              />
+
+              <SciFiInput
+                label="Access_Key"
+                placeholder="••••••••"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
+              />
+
+              <SciFiInput
+                label="Confirm_Access_Key"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry
+                icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
+              />
+
+              <View style={styles.actions}>
+                <SciFiButton
+                  title={loading ? "Registering..." : "Initialize Link"}
+                  onPress={handleSignUp}
+                  variant="primary"
+                  icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                />
+                <SciFiButton
+                  title="Already have a link? Sign In"
+                  onPress={() => navigation.navigate('Login')}
+                  variant="secondary"
+                />
+              </View>
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </SciFiBackground>
@@ -123,7 +129,11 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',
