@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import firebase from '@react-native-firebase/app';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import { firebaseConfig } from './firebase/config';
-
-// Initialize Firebase if not already initialized
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
 // Screens
 import WelcomeScreen from './screens/Auth/WelcomeScreen';
@@ -31,13 +24,11 @@ export type AuthStackParamList = {
 const Stack = createStackNavigator<AuthStackParamList>();
 
 function App() {
-  const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   // Handle user state changes
-  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
-    setUser(user);
-    if (initializing) setInitializing(false);
+  function onAuthStateChanged(userIn: FirebaseAuthTypes.User | null) {
+    setUser(userIn);
   }
 
   useEffect(() => {
@@ -45,7 +36,6 @@ function App() {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing) return null;
 
   return (
     <SafeAreaProvider>
