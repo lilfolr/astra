@@ -28,14 +28,13 @@ pull_request_rules:
       - label = automerge
     actions:
       merge:
-  - name: Automatic merge for Dependabot minor updates
-    description: Automatically approve and label minor and patch version bumps from Dependabot for automerge
+  - name: Automatic merge for Dependabot updates
+    description: Automatically approve and label version bumps from Dependabot for automerge
     conditions:
       - author = dependabot[bot]
       - "#check-pending=0"
       - "#check-failure=0"
       - "#check-success>0"
-      - "body ~= dependabot-update-type: (minor|patch)"
     actions:
       review:
         type: APPROVE
