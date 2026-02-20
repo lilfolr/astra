@@ -35,9 +35,7 @@ pull_request_rules:
       - "#check-pending=0"
       - "#check-failure=0"
       - "#check-success>0"
-      - or:
-        - body ~= "dependabot-update-type: minor"
-        - body ~= "dependabot-update-type: patch"
+      - "body ~= dependabot-update-type: (minor|patch)"
     actions:
       review:
         type: APPROVE
