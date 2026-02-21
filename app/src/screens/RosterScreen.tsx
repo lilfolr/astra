@@ -10,8 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Shield,
-  Radar,
   FileText,
   Award,
   RotateCcw,
@@ -20,7 +18,6 @@ import {
   Circle,
 } from 'lucide-react-native';
 import SciFiBackground from '../components/SciFiBackground';
-import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
 
 const CREW_MEMBERS = [
@@ -127,31 +124,6 @@ const RosterScreen = () => {
               <Text style={styles.overrideText}>CAPTAIN'S OVERRIDE: ACTIVE</Text>
             </View>
           </View>
-          <View style={styles.headerIcon}>
-            <Shield color={Colors.cyan} size={24} />
-          </View>
-        </View>
-
-        {/* Stats Grid */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statBox}>
-            <View style={styles.hudCornerTL} />
-            <View style={styles.hudCornerTR} />
-            <Text style={styles.statLabel}>ACTIVE UNITS</Text>
-            <Text style={styles.statValue}>
-              08<Text style={styles.statValueTotal}>/10</Text>
-            </Text>
-          </View>
-          {/* System Integrity block removed as requested */}
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <SciFiInput
-            label=""
-            placeholder="Scanning for Biosignals..."
-            icon={<Radar color={Colors.cyan} size={20} />}
-          />
         </View>
 
         {/* Crew List */}
@@ -176,10 +148,6 @@ const RosterScreen = () => {
             <PlusCircle color={Colors.cyan} size={20} />
             <Text style={styles.recruitButtonText}>RECRUIT NEW UNIT</Text>
           </TouchableOpacity>
-          <View style={styles.footerInfo}>
-            <Text style={styles.footerText}>ASTRA OS v4.2.0.8</Text>
-            <Text style={styles.footerText}>LAST SYNC: 12:44:02Z</Text>
-          </View>
         </View>
       </SafeAreaView>
     </SciFiBackground>
@@ -231,13 +199,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 2,
   },
-  headerIcon: {
-    backgroundColor: 'rgba(13, 185, 242, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(13, 185, 242, 0.4)',
-    padding: 8,
-    borderRadius: 8,
-  },
   statsGrid: {
     paddingHorizontal: 24,
     marginBottom: 24,
@@ -266,10 +227,6 @@ const styles = StyleSheet.create({
   },
   statValueTotal: {
     color: Colors.grey,
-  },
-  searchContainer: {
-    paddingHorizontal: 24,
-    marginBottom: 10,
   },
   scrollContent: {
     paddingHorizontal: 24,
