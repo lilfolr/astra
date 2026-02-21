@@ -11,6 +11,7 @@ import SignupScreen from './screens/Auth/SignupScreen';
 import JoinFleetScreen from './screens/Auth/JoinFleetScreen';
 import CreateProfileScreen from './screens/Auth/CreateProfileScreen';
 import CommandDeck from './screens/CommandDeck';
+import RosterScreen from './screens/RosterScreen';
 
 export type AuthStackParamList = {
   Welcome: undefined;
@@ -19,6 +20,7 @@ export type AuthStackParamList = {
   JoinFleet: undefined;
   CreateProfile: undefined;
   CommandDeck: undefined;
+  Roster: undefined;
 };
 
 const Stack = createStackNavigator<AuthStackParamList>();
@@ -50,6 +52,7 @@ function App() {
             /* Authenticated Stack */
             <>
               <Stack.Screen name="CommandDeck" component={CommandDeck} />
+              <Stack.Screen name="Roster" component={RosterScreen} />
               <Stack.Screen name="CreateProfile" component={CreateProfileScreen} />
             </>
           ) : (

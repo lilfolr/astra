@@ -149,6 +149,13 @@ const CommandDeck = () => {
 };
 
 const styles = StyleSheet.create({
+  navigationContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
+  navButton: {
+    width: '100%',
+  },
   container: {
     flex: 1,
   },
