@@ -5,7 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
 import SciFiBackground from '../../components/SciFiBackground';
 import SciFiButton from '../../components/SciFiButton';
-import Colors from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
 import { UserCircle } from 'lucide-react-native';
 
 type CreateProfileScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'CreateProfile'>;
@@ -15,14 +15,16 @@ interface Props {
 }
 
 const CreateProfileScreen: React.FC<Props> = ({ navigation }) => {
+  const { theme } = useTheme();
+
   return (
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <UserCircle color={Colors.cyan} size={80} style={{ marginBottom: 20 }} />
-          <Text style={styles.title}>CREATE PROFILE</Text>
-          <Text style={styles.subtitle}>[ STAGE 2: BIOMETRIC INITIALIZATION ]</Text>
-          <Text style={styles.description}>
+          <UserCircle color={theme.colors.primary} size={80} style={{ marginBottom: 20 }} />
+          <Text style={[styles.title, { color: theme.colors.text }]}>CREATE PROFILE</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.primary }]}>[ STAGE 2: BIOMETRIC INITIALIZATION ]</Text>
+          <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
             This screen is under construction. Your neural link is being established.
           </Text>
           <SciFiButton
@@ -47,21 +49,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   title: {
-    color: Colors.white,
     fontSize: 24,
     fontWeight: '700',
     letterSpacing: 4,
     marginBottom: 8,
   },
   subtitle: {
-    color: Colors.cyan,
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: 2,
     marginBottom: 24,
   },
   description: {
-    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 40,

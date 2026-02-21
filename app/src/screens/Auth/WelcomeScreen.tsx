@@ -5,7 +5,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
 import SciFiBackground from '../../components/SciFiBackground';
 import SciFiButton from '../../components/SciFiButton';
-import Colors from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
 import { Orbit, Zap, Terminal } from 'lucide-react-native';
 
 type WelcomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Welcome'>;
@@ -15,6 +15,7 @@ interface Props {
 }
 
 const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
+  const { theme } = useTheme();
   const [pulseAnim] = React.useState(new Animated.Value(1));
 
   React.useEffect(() => {
@@ -40,10 +41,10 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerItem}>
-            <Orbit color={Colors.cyan} size={16} opacity={0.8} />
-            <Text style={styles.headerText}>NET: SECURE</Text>
+            <Orbit color={theme.colors.primary} size={16} opacity={0.8} />
+            <Text style={[styles.headerText, { color: theme.colors.text }]}>NET: SECURE</Text>
           </View>
-          <Text style={styles.headerText}>ASTRA OS v4.2</Text>
+          <Text style={[styles.headerText, { color: theme.colors.text }]}>ASTRA OS v4.2</Text>
         </View>
 
         {/* Main Content */}
@@ -53,18 +54,25 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
             <Animated.View
               style={[
                 styles.reactorRing,
-                { transform: [{ scale: pulseAnim }], opacity: 0.3 }
+                {
+                  transform: [{ scale: pulseAnim }],
+                  opacity: 0.3,
+                  borderColor: theme.colors.border
+                }
               ]}
             />
-            <View style={[styles.reactorRing, styles.reactorRingInner]} />
-            <View style={styles.coreIconContainer}>
-              <Zap color={Colors.cyan} size={48} />
+            <View style={[styles.reactorRing, styles.reactorRingInner, { borderColor: theme.colors.border }]} />
+            <View style={[styles.coreIconContainer, {
+              backgroundColor: theme.colors.background,
+              borderColor: theme.colors.border
+            }]}>
+              <Zap color={theme.colors.primary} size={48} />
             </View>
           </View>
 
           <View style={styles.titles}>
-            <Text style={styles.title}>NEURAL LINK</Text>
-            <Text style={styles.subtitle}>INITIALIZING CONNECTION...</Text>
+            <Text style={[styles.title, { color: theme.colors.text }]}>NEURAL LINK</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.primary, opacity: 0.7 }]}>INITIALIZING CONNECTION...</Text>
           </View>
         </View>
 
@@ -88,11 +96,14 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         {/* Terminal Log */}
-        <View style={styles.terminal}>
+        <View style={[styles.terminal, {
+          backgroundColor: theme.dark ? 'rgba(0, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+          borderTopColor: theme.colors.border
+        }]}>
           <View style={styles.terminalHeader}>
-            <Terminal color={Colors.cyan} size={14} opacity={0.6} />
-            <Text style={styles.terminalText}>
-              <Text style={{ color: Colors.cyan }}>SHIP_AI:</Text> Awaiting instructions to bridge neural link.
+            <Terminal color={theme.colors.primary} size={14} opacity={0.6} />
+            <Text style={[styles.terminalText, { color: theme.colors.textSecondary }]}>
+              <Text style={{ color: theme.colors.primary }}>SHIP_AI:</Text> Awaiting instructions to bridge neural link.
             </Text>
           </View>
         </View>
@@ -118,7 +129,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerText: {
-    color: Colors.white,
     fontSize: 10,
     fontWeight: '700',
     letterSpacing: 2,
@@ -141,46 +151,32 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 90,
     borderWidth: 1,
-    borderColor: 'rgba(13, 185, 242, 0.2)',
   },
   reactorRingInner: {
     width: 140,
     height: 140,
     borderRadius: 70,
     borderStyle: 'dashed',
-    borderColor: 'rgba(13, 185, 242, 0.3)',
   },
   coreIconContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: 'rgba(11, 11, 11, 0.8)',
     borderWidth: 1,
-    borderColor: 'rgba(13, 185, 242, 0.5)',
     alignItems: 'center',
     justifyContent: 'center',
-    // shadowColor: Colors.cyan,
-    // shadowOffset: { width: 0, height: 0 },
-    // shadowOpacity: 0.5,
-    // shadowRadius: 20,
-    // elevation: 10,
   },
   titles: {
     alignItems: 'center',
     gap: 8,
   },
   title: {
-    color: Colors.white,
     fontSize: 32,
     fontWeight: '700',
     letterSpacing: 8,
     textAlign: 'center',
-    textShadowColor: 'rgba(13, 185, 242, 0.5)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
   },
   subtitle: {
-    color: 'rgba(13, 185, 242, 0.7)',
     fontSize: 12,
     fontWeight: '600',
     letterSpacing: 3,
@@ -192,9 +188,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   terminal: {
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.05)',
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
@@ -204,7 +198,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   terminalText: {
-    color: 'rgba(13, 185, 242, 0.6)',
     fontSize: 10,
     fontFamily: 'monospace',
     lineHeight: 14,

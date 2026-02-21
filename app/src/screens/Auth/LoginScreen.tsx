@@ -6,7 +6,7 @@ import { AuthStackParamList } from '../../App';
 import SciFiBackground from '../../components/SciFiBackground';
 import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
-import Colors from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
 import { Mail, Lock, LogIn, ArrowLeft } from 'lucide-react-native';
 import auth from '@react-native-firebase/auth';
 
@@ -17,6 +17,7 @@ interface Props {
 }
 
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,13 +58,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 onPress={() => navigation.goBack()}
                 variant="secondary"
                 style={styles.backButton}
-                icon={<ArrowLeft color={Colors.white} size={20} />}
+                icon={<ArrowLeft color={theme.colors.text} size={20} />}
               />
-              <Text style={styles.headerTitle}>SECURE AUTHENTICATION</Text>
+              <Text style={[styles.headerTitle, { color: theme.colors.primary }]}>SECURE AUTHENTICATION</Text>
             </View>
 
             <View style={styles.form}>
-              <Text style={styles.description}>
+              <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
                 Enter your credentials to establish a new fleet uplink.
               </Text>
 
@@ -74,7 +75,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                icon={<Mail color={Colors.cyan} size={18} opacity={0.5} />}
+                icon={<Mail color={theme.colors.primary} size={18} opacity={0.5} />}
               />
 
               <SciFiInput
@@ -83,7 +84,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
-                icon={<Lock color={Colors.cyan} size={18} opacity={0.5} />}
+                icon={<Lock color={theme.colors.primary} size={18} opacity={0.5} />}
               />
 
               <View style={styles.actions}>
@@ -91,7 +92,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   title={loading ? "Authenticating..." : "Board Ship"}
                   onPress={handleLogin}
                   variant="primary"
-                  icon={<LogIn color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={<LogIn color={theme.dark ? '#FFFFFF' : theme.colors.primary} size={18} style={{ marginLeft: 8 }} />}
                 />
                 <SciFiButton
                   title="Register New Account"
@@ -134,7 +135,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   headerTitle: {
-    color: Colors.cyan,
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 2,
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   description: {
-    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 32,

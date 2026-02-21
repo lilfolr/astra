@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet, TextInputProps } from 'react-native';
-import Colors from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 
 interface SciFiInputProps extends TextInputProps {
   label: string;
@@ -8,14 +8,21 @@ interface SciFiInputProps extends TextInputProps {
 }
 
 const SciFiInput: React.FC<SciFiInputProps> = ({ label, icon, ...props }) => {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label.toUpperCase()}</Text>
-      <View style={styles.inputWrapper}>
+      <Text style={[styles.label, { color: theme.dark ? 'rgba(0, 255, 255, 0.7)' : theme.colors.primary }]}>
+        {label.toUpperCase()}
+      </Text>
+      <View style={[styles.inputWrapper, {
+        backgroundColor: theme.colors.inputBg,
+        borderColor: theme.colors.border
+      }]}>
         {icon && <View style={styles.iconContainer}>{icon}</View>}
         <TextInput
-          style={styles.input}
-          placeholderTextColor="rgba(255, 255, 255, 0.3)"
+          style={[styles.input, { color: theme.colors.text }]}
+          placeholderTextColor={theme.colors.placeholder}
           {...props}
         />
       </View>
@@ -29,7 +36,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    color: 'rgba(0, 255, 255, 0.7)',
     fontSize: 10,
     fontWeight: '600',
     letterSpacing: 1.5,
@@ -39,10 +45,8 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(16, 30, 35, 0.6)',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(13, 185, 242, 0.2)',
     height: 56,
     paddingHorizontal: 12,
   },
@@ -51,7 +55,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: Colors.white,
     fontSize: 16,
     letterSpacing: 1,
   },

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
-import Colors from '../theme/colors';
+import { useTheme } from '../theme/ThemeContext';
 
 interface SciFiButtonProps {
   title: string;
@@ -19,7 +19,27 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
   textStyle,
   icon
 }) => {
+  const { theme } = useTheme();
   const isPrimary = variant === 'primary';
+
+  const primaryButtonStyle = {
+    backgroundColor: theme.dark ? 'rgba(0, 255, 255, 0.1)' : 'rgba(0, 113, 113, 0.1)',
+    borderColor: theme.colors.primary,
+    shadowColor: theme.colors.primary,
+  };
+
+  const secondaryButtonStyle = {
+    backgroundColor: theme.colors.glass,
+    borderColor: theme.colors.border,
+  };
+
+  const primaryTextStyle = {
+    color: theme.colors.primary,
+  };
+
+  const secondaryTextStyle = {
+    color: theme.colors.text,
+  };
 
   return (
     <TouchableOpacity
@@ -27,13 +47,13 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
       onPress={onPress}
       style={[
         styles.button,
-        isPrimary ? styles.primaryButton : styles.secondaryButton,
+        isPrimary ? primaryButtonStyle : secondaryButtonStyle,
         style
       ]}
     >
       <Text style={[
         styles.text,
-        isPrimary ? styles.primaryText : styles.secondaryText,
+        isPrimary ? primaryTextStyle : secondaryTextStyle,
         textStyle
       ]}>
         {title.toUpperCase()}
@@ -54,29 +74,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 8,
   },
-  primaryButton: {
-    backgroundColor: 'rgba(13, 185, 242, 0.1)',
-    borderColor: Colors.cyan,
-    shadowColor: Colors.cyan,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  secondaryButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-  },
   text: {
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 2,
-  },
-  primaryText: {
-    color: Colors.cyan,
-  },
-  secondaryText: {
-    color: Colors.white,
   },
 });
 

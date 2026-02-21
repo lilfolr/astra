@@ -6,7 +6,7 @@ import { AuthStackParamList } from '../../App';
 import SciFiBackground from '../../components/SciFiBackground';
 import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
-import Colors from '../../theme/colors';
+import { useTheme } from '../../theme/ThemeContext';
 import { Key, ArrowLeft, Ship } from 'lucide-react-native';
 
 type JoinFleetScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'JoinFleet'>;
@@ -16,6 +16,7 @@ interface Props {
 }
 
 const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
+  const { theme } = useTheme();
   const [accessCode, setAccessCode] = useState('');
 
   const handleJoin = () => {
@@ -41,13 +42,13 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
                 onPress={() => navigation.goBack()}
                 variant="secondary"
                 style={styles.backButton}
-                icon={<ArrowLeft color={Colors.white} size={20} />}
+                icon={<ArrowLeft color={theme.colors.text} size={20} />}
               />
-              <Text style={styles.headerTitle}>FLEET UPLINK</Text>
+              <Text style={[styles.headerTitle, { color: theme.colors.primary }]}>FLEET UPLINK</Text>
             </View>
 
             <View style={styles.form}>
-              <Text style={styles.description}>
+              <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
                 Enter the unique access code provided by your Fleet Commander to join an existing starship.
               </Text>
 
@@ -57,7 +58,7 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
                 value={accessCode}
                 onChangeText={setAccessCode}
                 autoCapitalize="characters"
-                icon={<Key color={Colors.cyan} size={18} opacity={0.5} />}
+                icon={<Key color={theme.colors.primary} size={18} opacity={0.5} />}
               />
 
               <View style={styles.actions}>
@@ -65,7 +66,7 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
                   title="Board Ship"
                   onPress={handleJoin}
                   variant="primary"
-                  icon={<Ship color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={<Ship color={theme.dark ? '#FFFFFF' : theme.colors.primary} size={18} style={{ marginLeft: 8 }} />}
                 />
               </View>
             </View>
@@ -103,7 +104,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   headerTitle: {
-    color: Colors.cyan,
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 2,
@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   description: {
-    color: 'rgba(255, 255, 255, 0.6)',
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 32,

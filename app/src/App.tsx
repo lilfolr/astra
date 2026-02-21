@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { ThemeProvider, useTheme } from './theme/ThemeContext';
 
 // Screens
 import WelcomeScreen from './screens/Auth/WelcomeScreen';
@@ -23,7 +24,8 @@ export type AuthStackParamList = {
 
 const Stack = createStackNavigator<AuthStackParamList>();
 
-function App() {
+function AppContent() {
+  const { theme } = useTheme();
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   // Handle user state changes
@@ -36,33 +38,40 @@ function App() {
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          cardStyle: { backgroundColor: theme.colors.background },
+        }}
+      >
+        {user ? (
+          /* Authenticated Stack */
+          <>
+            <Stack.Screen name="CommandDeck" component={CommandDeck} />
+            <Stack.Screen name="CreateProfile" component={CreateProfileScreen} />
+          </>
+        ) : (
+          /* Unauthenticated Stack */
+          <>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="JoinFleet" component={JoinFleetScreen} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
+function App() {
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            cardStyle: { backgroundColor: '#0B0B0B' },
-          }}
-        >
-          {user ? (
-            /* Authenticated Stack */
-            <>
-              <Stack.Screen name="CommandDeck" component={CommandDeck} />
-              <Stack.Screen name="CreateProfile" component={CreateProfileScreen} />
-            </>
-          ) : (
-            /* Unauthenticated Stack */
-            <>
-              <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Signup" component={SignupScreen} />
-              <Stack.Screen name="JoinFleet" component={JoinFleetScreen} />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }
