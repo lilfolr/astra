@@ -35,6 +35,7 @@ jobs:
         working-directory: app
 
   build-android:
+    needs: lint-and-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

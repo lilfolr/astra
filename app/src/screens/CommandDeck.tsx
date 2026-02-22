@@ -12,8 +12,16 @@ import {
   CircleDollarSign,
   Zap
 } from 'lucide-react-native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthStackParamList } from '../App';
 
-const CommandDeck = () => {
+type CommandDeckScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'CommandDeck'>;
+
+interface Props {
+  navigation: CommandDeckScreenNavigationProp
+}
+
+const CommandDeck : React.FC<Props>= ({navigation}) => {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -129,7 +137,8 @@ const CommandDeck = () => {
             <Text style={styles.tabLabel}>MISSIONS</Text>
           </TouchableOpacity>
           <View style={styles.tabDivider} />
-          <TouchableOpacity style={styles.tabItem}>
+            
+          <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Roster')}>
             <View style={styles.tabIconContainer}>
               <Users color={Colors.cyan} size={24} />
             </View>
@@ -149,6 +158,13 @@ const CommandDeck = () => {
 };
 
 const styles = StyleSheet.create({
+  navigationContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
+  navButton: {
+    width: '100%',
+  },
   container: {
     flex: 1,
   },
