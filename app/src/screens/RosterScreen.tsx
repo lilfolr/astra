@@ -9,6 +9,8 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthStackParamList } from '../App';
 import {
   FileText,
   Award,
@@ -97,7 +99,7 @@ const CrewCard = ({ member }: { member: typeof CREW_MEMBERS[0] }) => (
       </TouchableOpacity>
       <TouchableOpacity style={styles.actionButton}>
         <RotateCcw size={14} color={Colors.grey} />
-        <Text style={styles.actionButtonText}>RESET LOGIN</Text>
+        <Text style={styles.actionButtonText}>VIEW REGISTRATION TOKEN</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.actionButton}>
         <UserX size={14} color={Colors.grey} />
@@ -107,7 +109,13 @@ const CrewCard = ({ member }: { member: typeof CREW_MEMBERS[0] }) => (
   </View>
 );
 
-const RosterScreen = () => {
+type RosterScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Roster'>;
+
+interface Props {
+  navigation: RosterScreenNavigationProp;
+}
+
+const RosterScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
@@ -140,7 +148,10 @@ const RosterScreen = () => {
 
         {/* Footer Action */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.recruitButton}>
+          <TouchableOpacity
+            style={styles.recruitButton}
+            onPress={() => navigation.navigate('Recruit')}
+          >
             <View style={styles.hudCornerTL} />
             <View style={styles.hudCornerTR} />
             <View style={styles.hudCornerBL} />
