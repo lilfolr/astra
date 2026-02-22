@@ -11,40 +11,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
+          bun-version: latest
 
       - name: Cache node modules
         uses: actions/cache@v4
         id: cache-node-modules
         with:
           path: app/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/bun.lock') }}
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: app
 
       - name: Cache Jest
         uses: actions/cache@v4
         with:
           path: app/.jest-cache
-          key: ${{ runner.os }}-jest-${{ hashFiles('app/package-lock.json') }}
+          key: ${{ runner.os }}-jest-${{ hashFiles('app/bun.lock') }}
 
       - name: Lint
-        run: npm run lint
+        run: bun run lint
         working-directory: app
 
       - name: Type Check
-        run: npm run type-check
+        run: bun run type-check
         working-directory: app
 
       - name: Test
-        run: npm test
+        run: bun run test
         working-directory: app
 
   build-android:
@@ -54,22 +52,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
+          bun-version: latest
 
       - name: Cache node modules
         uses: actions/cache@v4
         id: cache-node-modules
         with:
           path: app/node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('app/bun.lock') }}
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
         working-directory: app
 
       - name: set up JDK 17
