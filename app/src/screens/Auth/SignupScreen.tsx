@@ -66,16 +66,16 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.backButton}
                 icon={<ArrowLeft color={Colors.white} size={20} />}
               />
-              <Text style={styles.headerTitle}>CREW REGISTRATION</Text>
+              <Text style={styles.headerTitle}>CREATE ACCOUNT</Text>
             </View>
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Initialize a new neural link to join the Astra Fleet.
+                Create a new account to join Astra.
               </Text>
 
               <SciFiInput
-                label="Fleet_Admin_Email"
+                label="Email"
                 placeholder="admin@astra.link"
                 value={email}
                 onChangeText={setEmail}
@@ -85,7 +85,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <SciFiInput
-                label="Access_Key"
+                label="Password"
                 placeholder="••••••••"
                 value={password}
                 onChangeText={setPassword}
@@ -94,7 +94,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <SciFiInput
-                label="Confirm_Access_Key"
+                label="Confirm Password"
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -104,13 +104,13 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? "Registering..." : "Initialize Link"}
+                  title={loading ? "Creating Account..." : "Sign Up"}
                   onPress={handleSignUp}
                   variant="primary"
                   icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
                 />
                 <SciFiButton
-                  title="Already have a link? Sign In"
+                  title="Already have an account? Sign In"
                   onPress={() => navigation.navigate('Login')}
                   variant="secondary"
                 />

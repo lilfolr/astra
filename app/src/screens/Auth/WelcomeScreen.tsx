@@ -41,9 +41,9 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.header}>
           <View style={styles.headerItem}>
             <Orbit color={Colors.cyan} size={16} opacity={0.8} />
-            <Text style={styles.headerText}>NET: SECURE</Text>
+            <Text style={styles.headerText}>CONNECTION SECURE</Text>
           </View>
-          <Text style={styles.headerText}>ASTRA OS v4.2</Text>
+          <Text style={styles.headerText}>ASTRA v4.2</Text>
         </View>
 
         {/* Main Content */}
@@ -63,25 +63,25 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <View style={styles.titles}>
-            <Text style={styles.title}>NEURAL LINK</Text>
-            <Text style={styles.subtitle}>INITIALIZING CONNECTION...</Text>
+            <Text style={styles.title}>WELCOME</Text>
+            <Text style={styles.subtitle}>STARTING UP...</Text>
           </View>
         </View>
 
         {/* Action Buttons */}
         <View style={styles.actions}>
           <SciFiButton
-            title="Initialize New Fleet"
+            title="Create New Family"
             variant="primary"
             onPress={() => navigation.navigate('Signup')}
           />
           <SciFiButton
-            title="Join Existing Fleet"
+            title="Join Family"
             variant="secondary"
             onPress={() => navigation.navigate('JoinFleet')}
           />
           <SciFiButton
-            title="Commander Sign-In"
+            title="Parent Sign-In"
             variant="secondary"
             onPress={() => navigation.navigate('Login')}
           />
@@ -92,7 +92,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.terminalHeader}>
             <Terminal color={Colors.cyan} size={14} opacity={0.6} />
             <Text style={styles.terminalText}>
-              <Text style={{ color: Colors.cyan }}>SHIP_AI:</Text> Awaiting instructions to bridge neural link.
+              <Text style={{ color: Colors.cyan }}>Astra:</Text> Ready to start.
             </Text>
           </View>
         </View>

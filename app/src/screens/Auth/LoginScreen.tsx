@@ -59,16 +59,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.backButton}
                 icon={<ArrowLeft color={Colors.white} size={20} />}
               />
-              <Text style={styles.headerTitle}>SECURE AUTHENTICATION</Text>
+              <Text style={styles.headerTitle}>SIGN IN</Text>
             </View>
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Enter your credentials to establish a new fleet uplink.
+                Enter your email and password to sign in.
               </Text>
 
               <SciFiInput
-                label="Fleet_Admin_Email"
+                label="Email"
                 placeholder="admin@astra.link"
                 value={email}
                 onChangeText={setEmail}
@@ -78,7 +78,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <SciFiInput
-                label="Access_Key"
+                label="Password"
                 placeholder="••••••••"
                 value={password}
                 onChangeText={setPassword}
@@ -88,13 +88,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? "Authenticating..." : "Board Ship"}
+                  title={loading ? "Signing in..." : "Sign In"}
                   onPress={handleLogin}
                   variant="primary"
                   icon={<LogIn color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
                 />
                 <SciFiButton
-                  title="Register New Account"
+                  title="Create Account"
                   onPress={() => navigation.navigate('Signup')}
                   variant="secondary"
                 />
