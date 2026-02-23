@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
@@ -8,6 +8,8 @@ import SciFiButton from '../components/SciFiButton';
 import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
 import { ArrowLeft, UserPlus } from 'lucide-react-native';
+import { starshipService, type Crew } from '../data';
+import auth from '@react-native-firebase/auth';
 
 type RecruitScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Recruit'>;
 
@@ -17,11 +19,50 @@ interface Props {
 
 const RecruitScreen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleRecruit = () => {
-    // For now, just go back. In a real app, we would save the data.
-    navigation.goBack();
+  const handleRecruit = async () => {
+    if (!name) {
+      Alert.alert('Error', 'Please provide a Unit Name.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const currentUser = auth().currentUser;
+      if (!currentUser) {
+        throw new Error('No authenticated user found.');
+      }
+
+      const starship = await starshipService.getStarshipByCaptainId(currentUser.uid);
+      const starshipId = starship?.starshipId || currentUser.uid;
+
+      const registrationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const registrationCodeExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+
+      const newCrew: Crew = {
+        name,
+        role: 'crew',
+        credits: 0,
+        xp: 0,
+        level: 1,
+        createdDate: Date.now(),
+        registrationCode,
+        registrationCodeExpiry,
+        status: 'pending',
+        lastSeen: Date.now(),
+      };
+
+      await starshipService.addCrewMember(starshipId, newCrew);
+      Alert.alert('Success', `Unit ${name} has been recruited!`, [
+        { text: 'OK', onPress: () => navigation.goBack() }
+      ]);
+    } catch (error: any) {
+      console.error('Recruitment failed:', error);
+      Alert.alert('Recruitment Failed', error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,19 +101,12 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
                 autoCapitalize="words"
               />
 
-              <SciFiInput
-                label="Unit Age"
-                placeholder="Enter Age"
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-              />
-
               <View style={styles.actions}>
                 <SciFiButton
-                  title="RECRUIT UNIT"
+                  title={loading ? 'RECRUITING...' : 'RECRUIT UNIT'}
                   onPress={handleRecruit}
                   variant="primary"
+                  disabled={loading}
                   icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
                 />
               </View>
