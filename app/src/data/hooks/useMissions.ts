@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as v from 'valibot';
+import { dataLogger } from '../logger';
 import { MissionSchema, type Mission } from '../models';
 
 /**
@@ -19,10 +20,12 @@ export function useMissions(starshipId: string | null) {
       return;
     }
 
+    dataLogger.logRequest('useMissions subscription', { starshipId });
     const unsubscribe = firestore()
       .collection(`api/v1/starships/${starshipId}/missions`)
       .onSnapshot(
         (snapshot) => {
+          dataLogger.logResponse(`useMissions snapshot (${starshipId})`, { count: snapshot.size });
           try {
             const missionsData = snapshot.docs.map((doc) => {
               const data = doc.data();
@@ -32,6 +35,7 @@ export function useMissions(starshipId: string | null) {
             setMissions(missionsData);
             setError(null);
           } catch (err: any) {
+            dataLogger.logError('useMissions validation', err);
             if (v.isValiError(err)) {
               setError(`Validation Error: ${err.issues.map((i: any) => i.message).join(', ')}`);
             } else {
@@ -41,7 +45,7 @@ export function useMissions(starshipId: string | null) {
           setLoading(false);
         },
         (err) => {
-          console.error('Firestore error in useMissions:', err);
+          dataLogger.logError('useMissions firestore', err);
           setError(err.message);
           setLoading(false);
         }
