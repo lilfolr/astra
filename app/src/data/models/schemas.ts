@@ -102,12 +102,21 @@ export const CrewRoleSchema = v.picklist(
 );
 
 /**
+ * Crew link statuses.
+ */
+export const CREW_STATUS = ['stable', 'weak', 'pending'] as const;
+export const CrewStatusSchema = v.picklist(
+  CREW_STATUS,
+  `Status must be one of: ${CREW_STATUS.join(', ')}`
+);
+
+/**
  * Schema for a Crew member.
  * Represents a user within a starship.
  */
 export const CrewSchema = v.object({
-  /** Firebase Authentication UID */
-  uid: v.pipe(v.string('UID must be a string'), v.nonEmpty('UID is required')),
+  /** Firebase Authentication UID (Optional for recruits) */
+  uid: v.optional(v.string('UID must be a string')),
   /** Display name of the crew member */
   name: v.pipe(v.string('Name must be a string'), v.nonEmpty('Name is required')),
   /** Role within the ship */
@@ -124,6 +133,12 @@ export const CrewSchema = v.object({
   registrationCode: v.string('Registration code must be a string'),
   /** Expiry time for the registration code (epoch) */
   registrationCodeExpiry: v.number('Registration code expiry must be a number'),
+  /** Optional avatar URL */
+  avatar: v.optional(v.string('Avatar must be a string')),
+  /** Current status of the crew member link */
+  status: CrewStatusSchema,
+  /** Last time the crew member was seen (epoch) */
+  lastSeen: v.number('Last seen must be a number'),
 });
 
 export type Crew = v.InferOutput<typeof CrewSchema>;

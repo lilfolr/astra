@@ -9,6 +9,7 @@ interface SciFiButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 const SciFiButton: React.FC<SciFiButtonProps> = ({
@@ -17,7 +18,8 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
   variant = 'primary',
   style,
   textStyle,
-  icon
+  icon,
+  disabled
 }) => {
   const isPrimary = variant === 'primary';
 
@@ -25,10 +27,12 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
+      disabled={disabled}
       style={[
         styles.button,
         isPrimary ? styles.primaryButton : styles.secondaryButton,
-        style
+        style,
+        disabled && styles.disabledButton
       ]}
     >
       <Text style={[
@@ -77,6 +81,9 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: Colors.white,
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
 

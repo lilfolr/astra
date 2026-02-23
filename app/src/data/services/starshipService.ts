@@ -63,7 +63,17 @@ export const starshipService = {
   },
 
   /**
-   * Updates a crew member's data.
+   * Adds a new crew member to a starship.
+   */
+  async addCrewMember(starshipId: string, crew: Crew) {
+    const validated = v.parse(CrewSchema, crew);
+    return await firestore()
+      .collection(`api/v1/starships/${starshipId}/crew`)
+      .add(validated);
+  },
+
+  /**
+   * Updates an existing crew member's data.
    */
   async updateCrewMember(starshipId: string, crewId: string, data: Partial<Crew>) {
     const PartialCrewSchema = v.partial(CrewSchema);
@@ -72,6 +82,25 @@ export const starshipService = {
     await firestore()
       .doc(`api/v1/starships/${starshipId}/crew/${crewId}`)
       .update(validated);
+  },
+
+  /**
+   * Finds a starship by its primary captain's UID.
+   */
+  async getStarshipByCaptainId(captainId: string): Promise<Starship | null> {
+    const snapshot = await firestore()
+      .collection('api/v1/starships')
+      .where('primaryCaptainId', '==', captainId)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    return v.parse(StarshipSchema, { ...data, starshipId: doc.id });
   },
 
   /**
