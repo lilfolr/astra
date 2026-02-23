@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { getAuth, onAuthStateChanged, FirebaseAuthTypes } from '@react-native-firebase/auth';
+import {
+  getAuth,
+  onAuthStateChanged,
+  FirebaseAuthTypes,
+} from '@react-native-firebase/auth';
 
 // Screens
 import WelcomeScreen from './screens/Auth/WelcomeScreen';
@@ -40,7 +44,6 @@ function App() {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-
   return (
     <SafeAreaProvider>
       <NavigationContainer>
@@ -56,7 +59,10 @@ function App() {
               <Stack.Screen name="CommandDeck" component={CommandDeck} />
               <Stack.Screen name="Roster" component={RosterScreen} />
               <Stack.Screen name="Recruit" component={RecruitScreen} />
-              <Stack.Screen name="CreateProfile" component={CreateProfileScreen} />
+              <Stack.Screen
+                name="CreateProfile"
+                component={CreateProfileScreen}
+              />
             </>
           ) : (
             /* Unauthenticated Stack */

@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
@@ -8,9 +16,15 @@ import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
 import Colors from '../../theme/colors';
 import { Mail, Lock, LogIn, ArrowLeft } from 'lucide-react-native';
-import { getAuth, signInWithEmailAndPassword } from '@react-native-firebase/auth';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+} from '@react-native-firebase/auth';
 
-type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+type LoginScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Login'
+>;
 
 interface Props {
   navigation: LoginScreenNavigationProp;
@@ -88,10 +102,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? "Authenticating..." : "Board Ship"}
+                  title={loading ? 'Authenticating...' : 'Board Ship'}
                   onPress={handleLogin}
                   variant="primary"
-                  icon={<LogIn color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={
+                    <LogIn
+                      color={Colors.white}
+                      size={18}
+                      style={{ marginLeft: 8 }}
+                    />
+                  }
                 />
                 <SciFiButton
                   title="Register New Account"

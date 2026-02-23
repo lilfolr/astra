@@ -10,10 +10,11 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
+    "lint": "eslint . && prettier --check .",
     "type-check": "tsc --noEmit",
     "start": "react-native start",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "format": "prettier --write . && eslint . --fix"
   },
   "dependencies": {
     "@react-native-firebase/app": "^23.8.6",

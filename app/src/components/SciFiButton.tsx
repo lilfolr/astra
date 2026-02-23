@@ -1,5 +1,11 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import Colors from '../theme/colors';
 
 interface SciFiButtonProps {
@@ -19,7 +25,7 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
   style,
   textStyle,
   icon,
-  disabled
+  disabled,
 }) => {
   const isPrimary = variant === 'primary';
 
@@ -32,14 +38,16 @@ const SciFiButton: React.FC<SciFiButtonProps> = ({
         styles.button,
         isPrimary ? styles.primaryButton : styles.secondaryButton,
         style,
-        disabled && styles.disabledButton
+        disabled && styles.disabledButton,
       ]}
     >
-      <Text style={[
-        styles.text,
-        isPrimary ? styles.primaryText : styles.secondaryText,
-        textStyle
-      ]}>
+      <Text
+        style={[
+          styles.text,
+          isPrimary ? styles.primaryText : styles.secondaryText,
+          textStyle,
+        ]}
+      >
         {title.toUpperCase()}
       </Text>
       {icon}

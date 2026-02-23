@@ -8,7 +8,10 @@ import SciFiButton from '../../components/SciFiButton';
 import Colors from '../../theme/colors';
 import { UserCircle } from 'lucide-react-native';
 
-type CreateProfileScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'CreateProfile'>;
+type CreateProfileScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'CreateProfile'
+>;
 
 interface Props {
   navigation: CreateProfileScreenNavigationProp;
@@ -19,11 +22,18 @@ const CreateProfileScreen: React.FC<Props> = ({ navigation }) => {
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
-          <UserCircle color={Colors.cyan} size={80} style={{ marginBottom: 20 }} />
+          <UserCircle
+            color={Colors.cyan}
+            size={80}
+            style={{ marginBottom: 20 }}
+          />
           <Text style={styles.title}>CREATE PROFILE</Text>
-          <Text style={styles.subtitle}>[ STAGE 2: BIOMETRIC INITIALIZATION ]</Text>
+          <Text style={styles.subtitle}>
+            [ STAGE 2: BIOMETRIC INITIALIZATION ]
+          </Text>
           <Text style={styles.description}>
-            This screen is under construction. Your neural link is being established.
+            This screen is under construction. Your neural link is being
+            established.
           </Text>
           <SciFiButton
             title="Proceed to Command Deck"
