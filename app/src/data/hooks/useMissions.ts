@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import firestore from '@react-native-firebase/firestore';
+import { getFirestore, collection, onSnapshot } from '@react-native-firebase/firestore';
 import * as v from 'valibot';
 import { dataLogger } from '../logger';
 import { MissionSchema, type Mission } from '../models';
@@ -21,13 +21,12 @@ export function useMissions(starshipId: string | null) {
     }
 
     dataLogger.logRequest('useMissions subscription', { starshipId });
-    const unsubscribe = firestore()
-      .collection(`api/v1/starships/${starshipId}/missions`)
-      .onSnapshot(
-        (snapshot) => {
-          dataLogger.logResponse(`useMissions snapshot (${starshipId})`, { count: snapshot.size });
+          const unsubscribe = onSnapshot(
+            collection(getFirestore(), `api/v1/starships/${starshipId}/missions`),
+            (snapshot) => {
+        dataLogger.logResponse(`useMissions snapshot (${starshipId})`, { count: snapshot.size });
           try {
-            const missionsData = snapshot.docs.map((doc) => {
+            const missionsData = snapshot.docs.map((doc: any) => {
               const data = doc.data();
               const validated = v.parse(MissionSchema, data);
               return { ...validated, id: doc.id };

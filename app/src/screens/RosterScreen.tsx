@@ -23,7 +23,7 @@ import {
 import SciFiBackground from '../components/SciFiBackground';
 import Colors from '../theme/colors';
 import { useCrew, starshipService, type Crew } from '../data';
-import auth from '@react-native-firebase/auth';
+import { getAuth } from '@react-native-firebase/auth';
 
 interface CrewCardProps {
   member: Crew & { id: string };
@@ -123,7 +123,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     const discoverStarship = async () => {
-      const currentUser = auth().currentUser;
+      const currentUser = getAuth().currentUser;
       if (currentUser) {
         try {
           const starship = await starshipService.getStarshipByCaptainId(currentUser.uid);

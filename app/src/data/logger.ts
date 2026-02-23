@@ -3,6 +3,11 @@
  * It uses __DEV__ to only log during development.
  */
 export const dataLogger = {
+  log: (...args: any[]) => {
+    if (__DEV__) {
+      console.log(...args);
+    }
+  },
   logRequest: (name: string, params?: any) => {
     if (__DEV__) {
       console.log(`[DATA] 🚀 Request: ${name}`, params);
