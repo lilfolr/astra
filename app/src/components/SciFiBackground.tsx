@@ -4,7 +4,9 @@ import Colors from '../theme/colors';
 
 const { width, height } = Dimensions.get('window');
 
-const SciFiBackground: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const SciFiBackground: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const gridSize = 40;
   const horizontalLines = Math.ceil(height / gridSize);
   const verticalLines = Math.ceil(width / gridSize);
@@ -18,7 +20,7 @@ const SciFiBackground: React.FC<{ children: React.ReactNode }> = ({ children }) 
             key={`h-${i}`}
             style={[
               styles.line,
-              { top: i * gridSize, width: '100%', height: 1 }
+              { top: i * gridSize, width: '100%', height: 1 },
             ]}
           />
         ))}
@@ -27,15 +29,32 @@ const SciFiBackground: React.FC<{ children: React.ReactNode }> = ({ children }) 
             key={`v-${i}`}
             style={[
               styles.line,
-              { left: i * gridSize, height: '100%', width: 1 }
+              { left: i * gridSize, height: '100%', width: 1 },
             ]}
           />
         ))}
       </View>
 
       {/* Decorative Glows */}
-      <View style={[styles.glow, { top: -100, left: -100, width: 300, height: 300, opacity: 0.1 }]} />
-      <View style={[styles.glow, { bottom: -50, right: -50, width: 250, height: 250, opacity: 0.05, backgroundColor: Colors.cyan }]} />
+      <View
+        style={[
+          styles.glow,
+          { top: -100, left: -100, width: 300, height: 300, opacity: 0.1 },
+        ]}
+      />
+      <View
+        style={[
+          styles.glow,
+          {
+            bottom: -50,
+            right: -50,
+            width: 250,
+            height: 250,
+            opacity: 0.05,
+            backgroundColor: Colors.cyan,
+          },
+        ]}
+      />
 
       {children}
     </View>

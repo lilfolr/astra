@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, TextInput, Text, StyleSheet, TextInputProps } from 'react-native';
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  TextInputProps,
+} from 'react-native';
 import Colors from '../theme/colors';
 
 interface SciFiInputProps extends TextInputProps {

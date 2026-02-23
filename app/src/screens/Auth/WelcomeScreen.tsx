@@ -8,7 +8,10 @@ import SciFiButton from '../../components/SciFiButton';
 import Colors from '../../theme/colors';
 import { Orbit, Zap, Terminal } from 'lucide-react-native';
 
-type WelcomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Welcome'>;
+type WelcomeScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Welcome'
+>;
 
 interface Props {
   navigation: WelcomeScreenNavigationProp;
@@ -30,7 +33,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -53,7 +56,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
             <Animated.View
               style={[
                 styles.reactorRing,
-                { transform: [{ scale: pulseAnim }], opacity: 0.3 }
+                { transform: [{ scale: pulseAnim }], opacity: 0.3 },
               ]}
             />
             <View style={[styles.reactorRing, styles.reactorRingInner]} />
@@ -92,7 +95,8 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.terminalHeader}>
             <Terminal color={Colors.cyan} size={14} opacity={0.6} />
             <Text style={styles.terminalText}>
-              <Text style={{ color: Colors.cyan }}>SHIP_AI:</Text> Awaiting instructions to bridge neural link.
+              <Text style={{ color: Colors.cyan }}>SHIP_AI:</Text> Awaiting
+              instructions to bridge neural link.
             </Text>
           </View>
         </View>

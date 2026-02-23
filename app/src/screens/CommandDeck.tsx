@@ -1,5 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, StatusBar, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  TouchableOpacity,
+  ScrollView,
+  Animated,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../theme/colors';
 import SciFiBackground from '../components/SciFiBackground';
@@ -10,18 +18,21 @@ import {
   Users,
   ShoppingBag,
   CircleDollarSign,
-  Zap
+  Zap,
 } from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
 
-type CommandDeckScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'CommandDeck'>;
+type CommandDeckScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'CommandDeck'
+>;
 
 interface Props {
-  navigation: CommandDeckScreenNavigationProp
+  navigation: CommandDeckScreenNavigationProp;
 }
 
-const CommandDeck : React.FC<Props>= ({navigation}) => {
+const CommandDeck: React.FC<Props> = ({ navigation }) => {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -37,7 +48,7 @@ const CommandDeck : React.FC<Props>= ({navigation}) => {
           duration: 1500,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     pulse.start();
     return () => pulse.stop();
@@ -46,7 +57,10 @@ const CommandDeck : React.FC<Props>= ({navigation}) => {
   return (
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.deepObsidian} />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={Colors.deepObsidian}
+        />
 
         {/* Header */}
         <View style={styles.header}>
@@ -70,7 +84,9 @@ const CommandDeck : React.FC<Props>= ({navigation}) => {
             </View>
             <View style={styles.integritySubtextContainer}>
               <Text style={styles.integritySubtext}>SYSTEMS STABLE</Text>
-              <Animated.Text style={[styles.integritySubtext, { opacity: pulseAnim }]}>
+              <Animated.Text
+                style={[styles.integritySubtext, { opacity: pulseAnim }]}
+              >
                 SHIELDS ACTIVE
               </Animated.Text>
             </View>
@@ -94,7 +110,8 @@ const CommandDeck : React.FC<Props>= ({navigation}) => {
           {/* Scrolling Ticker */}
           <View style={styles.tickerContainer}>
             <Text style={styles.tickerText} numberOfLines={1}>
-              SCANNING SECTOR 7G... /// ANOMALY DETECTED IN MESS HALL /// LIFE SUPPORT SYSTEMS OPTIMAL /// INCOMING TRANSMISSION FROM HQ...
+              SCANNING SECTOR 7G... /// ANOMALY DETECTED IN MESS HALL /// LIFE
+              SUPPORT SYSTEMS OPTIMAL /// INCOMING TRANSMISSION FROM HQ...
             </Text>
           </View>
 
@@ -137,8 +154,11 @@ const CommandDeck : React.FC<Props>= ({navigation}) => {
             <Text style={styles.tabLabel}>MISSIONS</Text>
           </TouchableOpacity>
           <View style={styles.tabDivider} />
-            
-          <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Roster')}>
+
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => navigation.navigate('Roster')}
+          >
             <View style={styles.tabIconContainer}>
               <Users color={Colors.cyan} size={24} />
             </View>

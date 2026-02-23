@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
@@ -9,7 +16,10 @@ import SciFiInput from '../../components/SciFiInput';
 import Colors from '../../theme/colors';
 import { Key, ArrowLeft, Ship } from 'lucide-react-native';
 
-type JoinFleetScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'JoinFleet'>;
+type JoinFleetScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'JoinFleet'
+>;
 
 interface Props {
   navigation: JoinFleetScreenNavigationProp;
@@ -48,7 +58,8 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Enter the unique access code provided by your Fleet Commander to join an existing starship.
+                Enter the unique access code provided by your Fleet Commander to
+                join an existing starship.
               </Text>
 
               <SciFiInput
@@ -65,7 +76,13 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
                   title="Board Ship"
                   onPress={handleJoin}
                   variant="primary"
-                  icon={<Ship color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={
+                    <Ship
+                      color={Colors.white}
+                      size={18}
+                      style={{ marginLeft: 8 }}
+                    />
+                  }
                 />
               </View>
             </View>
