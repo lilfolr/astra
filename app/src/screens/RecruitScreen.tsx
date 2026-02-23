@@ -9,7 +9,7 @@ import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
 import { ArrowLeft, UserPlus } from 'lucide-react-native';
 import { starshipService, type Crew } from '../data';
-import auth from '@react-native-firebase/auth';
+import { getAuth } from '@react-native-firebase/auth';
 
 type RecruitScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Recruit'>;
 
@@ -29,7 +29,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const currentUser = auth().currentUser;
+      const currentUser = getAuth().currentUser;
       if (!currentUser) {
         throw new Error('No authenticated user found.');
       }

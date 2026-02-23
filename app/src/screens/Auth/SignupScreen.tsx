@@ -8,7 +8,7 @@ import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
 import Colors from '../../theme/colors';
 import { Mail, Lock, UserPlus, ArrowLeft } from 'lucide-react-native';
-import auth from '@react-native-firebase/auth';
+import { getAuth, createUserWithEmailAndPassword } from '@react-native-firebase/auth';
 
 type SignupScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Signup'>;
 
@@ -35,7 +35,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
+      await createUserWithEmailAndPassword(getAuth(), email, password);
       // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
