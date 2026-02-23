@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as v from 'valibot';
+import { dataLogger } from '../logger';
 import { ModuleSchema, type Module } from '../models';
 
 /**
@@ -19,10 +20,12 @@ export function useModules(starshipId: string | null) {
       return;
     }
 
+    dataLogger.logRequest('useModules subscription', { starshipId });
     const unsubscribe = firestore()
       .collection(`api/v1/starships/${starshipId}/modules`)
       .onSnapshot(
         (snapshot) => {
+          dataLogger.logResponse(`useModules snapshot (${starshipId})`, { count: snapshot.size });
           try {
             const modulesData = snapshot.docs.map((doc) => {
               const data = doc.data();
@@ -32,6 +35,7 @@ export function useModules(starshipId: string | null) {
             setModules(modulesData);
             setError(null);
           } catch (err: any) {
+            dataLogger.logError('useModules validation', err);
             if (v.isValiError(err)) {
               setError(`Validation Error: ${err.issues.map((i: any) => i.message).join(', ')}`);
             } else {
@@ -41,7 +45,7 @@ export function useModules(starshipId: string | null) {
           setLoading(false);
         },
         (err) => {
-          console.error('Firestore error in useModules:', err);
+          dataLogger.logError('useModules firestore', err);
           setError(err.message);
           setLoading(false);
         }

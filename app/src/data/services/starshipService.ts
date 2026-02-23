@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import * as v from 'valibot';
+import { dataLogger } from '../logger';
 import {
   StarshipSchema,
   MissionSchema,
@@ -19,88 +20,142 @@ export const starshipService = {
    * Updates an existing starship.
    */
   async updateStarship(starshipId: string, data: Partial<Starship>) {
-    const PartialStarshipSchema = v.partial(StarshipSchema);
-    const validated = v.parse(PartialStarshipSchema, data);
+    dataLogger.logRequest('updateStarship', { starshipId, data });
+    try {
+      const PartialStarshipSchema = v.partial(StarshipSchema);
+      const validated = v.parse(PartialStarshipSchema, data);
 
-    await firestore()
-      .doc(`api/v1/starships/${starshipId}`)
-      .update({
-        ...validated,
-        lastUpdate: firestore.FieldValue.serverTimestamp(),
-      });
+      await firestore()
+        .doc(`api/v1/starships/${starshipId}`)
+        .update({
+          ...validated,
+          lastUpdate: firestore.FieldValue.serverTimestamp(),
+        });
+      dataLogger.logResponse('updateStarship', { starshipId, status: 'success' });
+    } catch (error) {
+      dataLogger.logError('updateStarship', error);
+      throw error;
+    }
   },
 
   /**
    * Adds a new mission to a starship.
    */
   async addMission(starshipId: string, mission: Mission) {
-    const validated = v.parse(MissionSchema, mission);
-    return await firestore()
-      .collection(`api/v1/starships/${starshipId}/missions`)
-      .add(validated);
+    dataLogger.logRequest('addMission', { starshipId, mission });
+    try {
+      const validated = v.parse(MissionSchema, mission);
+      const result = await firestore()
+        .collection(`api/v1/starships/${starshipId}/missions`)
+        .add(validated);
+      dataLogger.logResponse('addMission', { id: result.id });
+      return result;
+    } catch (error) {
+      dataLogger.logError('addMission', error);
+      throw error;
+    }
   },
 
   /**
    * Updates an existing mission.
    */
   async updateMission(starshipId: string, missionId: string, data: Partial<Mission>) {
-    const PartialMissionSchema = v.partial(MissionSchema);
-    const validated = v.parse(PartialMissionSchema, data);
+    dataLogger.logRequest('updateMission', { starshipId, missionId, data });
+    try {
+      const PartialMissionSchema = v.partial(MissionSchema);
+      const validated = v.parse(PartialMissionSchema, data);
 
-    await firestore()
-      .doc(`api/v1/starships/${starshipId}/missions/${missionId}`)
-      .update(validated);
+      await firestore()
+        .doc(`api/v1/starships/${starshipId}/missions/${missionId}`)
+        .update(validated);
+      dataLogger.logResponse('updateMission', { starshipId, missionId, status: 'success' });
+    } catch (error) {
+      dataLogger.logError('updateMission', error);
+      throw error;
+    }
   },
 
   /**
    * Adds a new module to a starship.
    */
   async addModule(starshipId: string, module: Module) {
-    const validated = v.parse(ModuleSchema, module);
-    return await firestore()
-      .collection(`api/v1/starships/${starshipId}/modules`)
-      .add(validated);
+    dataLogger.logRequest('addModule', { starshipId, module });
+    try {
+      const validated = v.parse(ModuleSchema, module);
+      const result = await firestore()
+        .collection(`api/v1/starships/${starshipId}/modules`)
+        .add(validated);
+      dataLogger.logResponse('addModule', { id: result.id });
+      return result;
+    } catch (error) {
+      dataLogger.logError('addModule', error);
+      throw error;
+    }
   },
 
   /**
    * Adds a new crew member to a starship.
    */
   async addCrewMember(starshipId: string, crew: Crew) {
-    const validated = v.parse(CrewSchema, crew);
-    return await firestore()
-      .collection(`api/v1/starships/${starshipId}/crew`)
-      .add(validated);
+    dataLogger.logRequest('addCrewMember', { starshipId, crew });
+    try {
+      const validated = v.parse(CrewSchema, crew);
+      const result = await firestore()
+        .collection(`api/v1/starships/${starshipId}/crew`)
+        .add(validated);
+      dataLogger.logResponse('addCrewMember', { id: result.id });
+      return result;
+    } catch (error) {
+      dataLogger.logError('addCrewMember', error);
+      throw error;
+    }
   },
 
   /**
    * Updates an existing crew member's data.
    */
   async updateCrewMember(starshipId: string, crewId: string, data: Partial<Crew>) {
-    const PartialCrewSchema = v.partial(CrewSchema);
-    const validated = v.parse(PartialCrewSchema, data);
+    dataLogger.logRequest('updateCrewMember', { starshipId, crewId, data });
+    try {
+      const PartialCrewSchema = v.partial(CrewSchema);
+      const validated = v.parse(PartialCrewSchema, data);
 
-    await firestore()
-      .doc(`api/v1/starships/${starshipId}/crew/${crewId}`)
-      .update(validated);
+      await firestore()
+        .doc(`api/v1/starships/${starshipId}/crew/${crewId}`)
+        .update(validated);
+      dataLogger.logResponse('updateCrewMember', { starshipId, crewId, status: 'success' });
+    } catch (error) {
+      dataLogger.logError('updateCrewMember', error);
+      throw error;
+    }
   },
 
   /**
    * Finds a starship by its primary captain's UID.
    */
   async getStarshipByCaptainId(captainId: string): Promise<Starship | null> {
-    const snapshot = await firestore()
-      .collection('api/v1/starships')
-      .where('primaryCaptainId', '==', captainId)
-      .limit(1)
-      .get();
+    dataLogger.logRequest('getStarshipByCaptainId', { captainId });
+    try {
+      const snapshot = await firestore()
+        .collection('api/v1/starships')
+        .where('primaryCaptainId', '==', captainId)
+        .limit(1)
+        .get();
 
-    if (snapshot.empty) {
-      return null;
+      if (snapshot.empty) {
+        dataLogger.logResponse('getStarshipByCaptainId', null);
+        return null;
+      }
+
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      const validated = v.parse(StarshipSchema, { ...data, starshipId: doc.id });
+      dataLogger.logResponse('getStarshipByCaptainId', validated);
+      return validated;
+    } catch (error) {
+      dataLogger.logError('getStarshipByCaptainId', error);
+      throw error;
     }
-
-    const doc = snapshot.docs[0];
-    const data = doc.data();
-    return v.parse(StarshipSchema, { ...data, starshipId: doc.id });
   },
 
   /**

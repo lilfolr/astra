@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import firestore from '@react-native-firebase/firestore';
 import * as v from 'valibot';
+import { dataLogger } from '../logger';
 import { StarshipSchema, type Starship } from '../models';
 
 /**
@@ -19,12 +20,14 @@ export function useStarship(starshipId: string | null) {
       return;
     }
 
+    dataLogger.logRequest('useStarship subscription', { starshipId });
     const unsubscribe = firestore()
       .doc(`api/v1/starships/${starshipId}`)
       .onSnapshot(
         (doc) => {
           // @ts-ignore - DocumentSnapshot.exists is a property in some versions and a function in others
           const exists = typeof doc.exists === 'function' ? doc.exists() : doc.exists;
+          dataLogger.logResponse(`useStarship snapshot (${starshipId})`, { exists });
           if (exists) {
             try {
               const data = doc.data();
@@ -33,6 +36,7 @@ export function useStarship(starshipId: string | null) {
               setStarship(validated);
               setError(null);
             } catch (err: any) {
+              dataLogger.logError('useStarship validation', err);
               if (v.isValiError(err)) {
                 setError(`Validation Error: ${err.issues.map((i: any) => i.message).join(', ')}`);
               } else {
@@ -47,7 +51,7 @@ export function useStarship(starshipId: string | null) {
           setLoading(false);
         },
         (err) => {
-          console.error('Firestore error in useStarship:', err);
+          dataLogger.logError('useStarship firestore', err);
           setError(err.message);
           setLoading(false);
         }
