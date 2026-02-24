@@ -52,15 +52,10 @@ export type Starship = v.InferOutput<typeof StarshipSchema>;
  * Represents a room in the house.
  */
 export const ModuleSchema = v.object({
-  /** Name of the module (e.g., "Bridge", "Engine Room") */
+  /** Name of the module (e.g., "Kitchen", "Laundry") */
   name: v.pipe(
     v.string('Module name must be a string'),
     v.nonEmpty('Module name is required'),
-  ),
-  /** Real world room name (e.g., "Living Room", "Kitchen") */
-  realWorldRoom: v.pipe(
-    v.string('Real world room must be a string'),
-    v.nonEmpty('Real world room name is required'),
   ),
   /** Icon name from lucide-react-native */
   icon: v.pipe(
