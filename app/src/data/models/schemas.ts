@@ -175,3 +175,23 @@ export const CrewSchema = v.object({
 });
 
 export type Crew = v.InferOutput<typeof CrewSchema>;
+
+/**
+ * Schema for mapping a User to a Starship.
+ */
+export const UserStarshipSchema = v.object({
+  /** Firebase Authentication UID */
+  userId: v.pipe(
+    v.string('User ID must be a string'),
+    v.nonEmpty('User ID is required'),
+  ),
+  /** The starship ID this user belongs to */
+  starshipId: v.pipe(
+    v.string('Starship ID must be a string'),
+    v.nonEmpty('Starship ID is required'),
+  ),
+  /** Last time this mapping was updated */
+  lastUpdate: v.any(),
+});
+
+export type UserStarship = v.InferOutput<typeof UserStarshipSchema>;
