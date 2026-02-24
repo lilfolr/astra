@@ -243,9 +243,12 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
 
         {/* Bottom Tab Bar */}
         <View style={styles.tabBar}>
-          <TouchableOpacity style={styles.tabItem}>
-            <View style={[styles.tabIconContainer, styles.activeTabIcon]}>
-              <ClipboardList color={Colors.neonOrange} size={24} />
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => navigation.navigate('Missions')}
+          >
+            <View style={styles.tabIconContainer}>
+              <ClipboardList color={Colors.cyan} size={24} />
             </View>
             <Text style={styles.tabLabel}>CHORES</Text>
           </TouchableOpacity>
