@@ -93,7 +93,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           <View style={styles.headerTop}>
             <View style={styles.titleContainer}>
               <Rocket color={Colors.cyan} size={24} style={styles.headerIcon} />
-              <Text style={styles.title}>COMMAND DECK</Text>
+              <Text style={styles.title}>DASHBOARD</Text>
             </View>
             <TouchableOpacity>
               <Settings color={Colors.cyan} size={24} />
@@ -102,18 +102,18 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
 
           <View style={styles.integrityBarContainer}>
             <View style={styles.integrityBarLabelContainer}>
-              <Text style={styles.integrityBarLabel}>HULL INTEGRITY</Text>
+              <Text style={styles.integrityBarLabel}>FAMILY STATUS</Text>
               <Text style={styles.integrityValue}>85%</Text>
             </View>
             <View style={styles.integrityBarBackground}>
               <View style={[styles.integrityBarFill, { width: '85%' }]} />
             </View>
             <View style={styles.integritySubtextContainer}>
-              <Text style={styles.integritySubtext}>SYSTEMS STABLE</Text>
+              <Text style={styles.integritySubtext}>ALL GOOD</Text>
               <Animated.Text
                 style={[styles.integritySubtext, { opacity: pulseAnim }]}
               >
-                SHIELDS ACTIVE
+                STAYING SAFE
               </Animated.Text>
             </View>
           </View>
@@ -121,12 +121,12 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           {/* Mission Status Component */}
           <View style={styles.missionSummary}>
             <View style={styles.missionItem}>
-              <Text style={styles.missionLabel}>TOTAL MISSIONS</Text>
+              <Text style={styles.missionLabel}>TOTAL CHORES</Text>
               <Text style={styles.missionValue}>12</Text>
             </View>
             <View style={styles.missionDivider} />
             <View style={styles.missionItem}>
-              <Text style={styles.missionLabel}>ASSIGNED TO ME</Text>
+              <Text style={styles.missionLabel}>MY CHORES</Text>
               <Text style={styles.missionValue}>3</Text>
             </View>
           </View>
@@ -136,8 +136,8 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           {/* Scrolling Ticker */}
           <View style={styles.tickerContainer}>
             <Text style={styles.tickerText} numberOfLines={1}>
-              SCANNING SECTOR 7G... /// ANOMALY DETECTED IN MESS HALL /// LIFE
-              SUPPORT SYSTEMS OPTIMAL /// INCOMING TRANSMISSION FROM HQ...
+              Family is doing great! /// New chore assigned in Kitchen ///
+              Everyone is active today /// Welcome back!
             </Text>
           </View>
 
@@ -149,13 +149,13 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.rankLevel}>L4</Text>
               </View>
               <View>
-                <Text style={styles.statLabel}>RANK</Text>
+                <Text style={styles.statLabel}>LEVEL</Text>
                 <Text style={styles.statValue}>Cadet</Text>
               </View>
             </View>
             <View style={styles.statCard}>
               <View>
-                <Text style={styles.statLabel}>CREDITS</Text>
+                <Text style={styles.statLabel}>POINTS</Text>
                 <Text style={styles.statValue}>450 CR</Text>
               </View>
               <CircleDollarSign color={Colors.cyan} size={24} />
@@ -165,9 +165,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           {/* Ship Schematic / Modules */}
           <View style={styles.schematicContainer}>
             <View style={styles.schematicHeader}>
-              <Text style={styles.schematicTitle}>
-                SHIP SCHEMATIC: HOME BASE
-              </Text>
+              <Text style={styles.schematicTitle}>HOME LAYOUT</Text>
               <TouchableOpacity
                 style={styles.addModuleButton}
                 onPress={() =>
@@ -176,7 +174,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                 }
               >
                 <Plus color={Colors.deepObsidian} size={14} />
-                <Text style={styles.addModuleButtonText}>CONSTRUCT</Text>
+                <Text style={styles.addModuleButtonText}>ADD ROOM</Text>
               </TouchableOpacity>
             </View>
 
@@ -192,7 +190,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                   }
                 >
                   <Plus color={Colors.cyan} size={32} opacity={0.5} />
-                  <Text style={styles.emptyModulesText}>CONSTRUCT_MODULE</Text>
+                  <Text style={styles.emptyModulesText}>ADD ROOM</Text>
                 </TouchableOpacity>
               ) : (
                 <View style={styles.moduleList}>
@@ -237,7 +235,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             <View style={[styles.tabIconContainer, styles.activeTabIcon]}>
               <ClipboardList color={Colors.neonOrange} size={24} />
             </View>
-            <Text style={styles.tabLabel}>MISSIONS</Text>
+            <Text style={styles.tabLabel}>CHORES</Text>
           </TouchableOpacity>
           <View style={styles.tabDivider} />
 
@@ -248,14 +246,14 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             <View style={styles.tabIconContainer}>
               <Users color={Colors.cyan} size={24} />
             </View>
-            <Text style={styles.tabLabel}>ROSTER</Text>
+            <Text style={styles.tabLabel}>FAMILY</Text>
           </TouchableOpacity>
           <View style={styles.tabDivider} />
           <TouchableOpacity style={styles.tabItem}>
             <View style={styles.tabIconContainer}>
               <ShoppingBag color={Colors.cyan} size={24} />
             </View>
-            <Text style={styles.tabLabel}>STORE</Text>
+            <Text style={styles.tabLabel}>SHOP</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

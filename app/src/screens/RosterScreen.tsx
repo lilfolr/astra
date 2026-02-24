@@ -90,15 +90,15 @@ const CrewCard = ({ member }: CrewCardProps) => {
       <View style={styles.buttonGrid}>
         <TouchableOpacity style={styles.actionButton}>
           <FileText size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>MISSION LOG</Text>
+          <Text style={styles.actionButtonText}>CHORE HISTORY</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <Award size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>ADJUST RANK/CREDITS</Text>
+          <Text style={styles.actionButtonText}>EDIT LEVEL/POINTS</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <RotateCcw size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>VIEW REGISTRATION TOKEN</Text>
+          <Text style={styles.actionButtonText}>VIEW INVITE CODE</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <UserX size={14} color={Colors.grey} />
@@ -148,14 +148,12 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.headerTitle}>FLEET ROSTER</Text>
+            <Text style={styles.headerTitle}>FAMILY</Text>
             <View style={styles.overrideContainer}>
               <View style={styles.pulseContainer}>
                 <View style={styles.pulseDot} />
               </View>
-              <Text style={styles.overrideText}>
-                CAPTAIN'S OVERRIDE: ACTIVE
-              </Text>
+              <Text style={styles.overrideText}>PARENT CONTROL: ACTIVE</Text>
             </View>
           </View>
         </View>
@@ -168,7 +166,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
           {loading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
-              <Text style={styles.loadingText}>SCANNING LIFE SIGNS...</Text>
+              <Text style={styles.loadingText}>LOADING FAMILY...</Text>
             </View>
           ) : error ? (
             <View style={styles.centered}>
@@ -176,9 +174,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           ) : crew.length === 0 ? (
             <View style={styles.centered}>
-              <Text style={styles.emptyText}>
-                NO LIFE SIGNS DETECTED IN FLEET ROSTER
-              </Text>
+              <Text style={styles.emptyText}>NO FAMILY MEMBERS FOUND</Text>
             </View>
           ) : (
             crew.map(member => <CrewCard key={member.id} member={member} />)
@@ -198,7 +194,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.hudCornerBL} />
             <View style={styles.hudCornerBR} />
             <PlusCircle color={Colors.cyan} size={20} />
-            <Text style={styles.recruitButtonText}>RECRUIT NEW UNIT</Text>
+            <Text style={styles.recruitButtonText}>ADD FAMILY MEMBER</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>

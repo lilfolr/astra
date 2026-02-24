@@ -80,16 +80,16 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.backButton}
                 icon={<ArrowLeft color={Colors.white} size={20} />}
               />
-              <Text style={styles.headerTitle}>CREW REGISTRATION</Text>
+              <Text style={styles.headerTitle}>CREATE ACCOUNT</Text>
             </View>
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Initialize a new neural link to join the Astra Fleet.
+                Create a new account to manage your family chores.
               </Text>
 
               <SciFiInput
-                label="Fleet_Admin_Email"
+                label="Email"
                 placeholder="admin@astra.link"
                 value={email}
                 onChangeText={setEmail}
@@ -99,7 +99,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <SciFiInput
-                label="Access_Key"
+                label="Password"
                 placeholder="••••••••"
                 value={password}
                 onChangeText={setPassword}
@@ -108,7 +108,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
               />
 
               <SciFiInput
-                label="Confirm_Access_Key"
+                label="Confirm Password"
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -118,7 +118,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? 'Registering...' : 'Initialize Link'}
+                  title={loading ? 'Registering...' : 'Create Account'}
                   onPress={handleSignUp}
                   variant="primary"
                   icon={
@@ -130,7 +130,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
                   }
                 />
                 <SciFiButton
-                  title="Already have a link? Sign In"
+                  title="Already have an account? Sign In"
                   onPress={() => navigation.navigate('Login')}
                   variant="secondary"
                 />
