@@ -48,17 +48,25 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
       const currentUser = getAuth().currentUser;
       if (currentUser) {
         try {
-          // 1. Try to get starship ID from the new mapping collection
+          // 1. Try to get starship ID from the new mapping collection (fastest)
           let sid = await starshipService.getStarshipIdForUser(currentUser.uid);
 
           if (!sid) {
-            // 2. Fallback to searching by captain ID (for legacy users)
-            const starship = await starshipService.getStarshipByCaptainId(
+            // 2. Fallback to searching by captain ID
+            let starship = await starshipService.getStarshipByCaptainId(
               currentUser.uid,
             );
+
+            // 3. If not a captain, try crew lookup
+            if (!starship) {
+              starship = await starshipService.getStarshipByCrewUid(
+                currentUser.uid,
+              );
+            }
+
             sid = starship?.starshipId || currentUser.uid;
 
-            // 3. Establish the mapping for future fast lookups
+            // 4. Establish the mapping for future fast lookups
             await starshipService.linkUserToStarship(currentUser.uid, sid);
           }
 
