@@ -214,9 +214,6 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                         </View>
                         <View style={styles.moduleInfo}>
                           <Text style={styles.moduleName}>{module.name}</Text>
-                          <Text style={styles.moduleRealName}>
-                            {module.realWorldRoom}
-                          </Text>
                         </View>
                         <ArrowRight
                           color={Colors.cyan}

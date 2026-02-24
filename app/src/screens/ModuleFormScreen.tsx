@@ -48,33 +48,29 @@ interface Props {
 
 const COMMON_ROOMS = [
   {
-    id: 'mess_hall',
+    id: 'kitchen',
     name: 'KITCHEN',
-    realWorldRoom: 'KITCHEN',
     icon: 'Utensils',
     subtext: 'KITCHEN',
     IconComponent: Utensils,
   },
   {
-    id: 'engine_room',
+    id: 'laundry',
     name: 'LAUNDRY',
-    realWorldRoom: 'LAUNDRY',
     icon: 'Zap',
     subtext: 'LAUNDRY',
     IconComponent: Zap,
   },
   {
-    id: 'life_support',
+    id: 'bathroom',
     name: 'BATHROOM',
-    realWorldRoom: 'BATHROOM',
     icon: 'HeartPulse',
     subtext: 'BATHROOM',
     IconComponent: HeartPulse,
   },
   {
-    id: 'garden',
+    id: 'outside',
     name: 'OUTSIDE',
-    realWorldRoom: 'OUTSIDE',
     icon: 'Leaf',
     subtext: 'OUTSIDE',
     IconComponent: Leaf,
@@ -99,20 +95,16 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const isEditing = !!existingModule;
 
   const [name, setName] = useState(existingModule?.name || '');
-  const [realWorldRoom, setRealWorldRoom] = useState(
-    existingModule?.realWorldRoom || '',
-  );
   const [icon, setIcon] = useState(existingModule?.icon || 'Box');
   const [loading, setLoading] = useState(false);
 
   const handleSelectCommonRoom = (room: (typeof COMMON_ROOMS)[0]) => {
     setName(room.name);
-    setRealWorldRoom(room.realWorldRoom);
     setIcon(room.icon);
   };
 
   const handleSave = async () => {
-    if (!name || !realWorldRoom || !icon) {
+    if (!name || !icon) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -121,7 +113,6 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
     try {
       const moduleData = {
         name,
-        realWorldRoom,
         icon,
         incompleteMissions: existingModule?.incompleteMissions || [],
       };
@@ -213,10 +204,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
 
             <View style={styles.grid}>
               {COMMON_ROOMS.map(room => {
-                const isSelected =
-                  name === room.name &&
-                  realWorldRoom === room.realWorldRoom &&
-                  icon === room.icon;
+                const isSelected = name === room.name && icon === room.icon;
                 return (
                   <TouchableOpacity
                     key={room.id}
@@ -256,16 +244,10 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
             </View>
 
             <SciFiInput
-              label="Room Name"
+              label="Name"
               value={name}
               onChangeText={setName}
-              placeholder="Enter room name..."
-            />
-            <SciFiInput
-              label="Real World Room"
-              value={realWorldRoom}
-              onChangeText={setRealWorldRoom}
-              placeholder="Enter room type..."
+              placeholder="ENTER_ROOM_NAME..."
             />
           </View>
 
