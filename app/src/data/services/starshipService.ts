@@ -2,6 +2,8 @@ import {
   getFirestore,
   collection,
   doc,
+  getDoc,
+  setDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -18,10 +20,12 @@ import {
   MissionSchema,
   ModuleSchema,
   CrewSchema,
+  UserStarshipSchema,
   type Starship,
   type Mission,
   type Module,
   type Crew,
+  type UserStarship,
 } from '../models';
 
 /**
@@ -261,5 +265,51 @@ export const starshipService = {
       throw new Error('Hull integrity must be between 0 and 100');
     }
     await this.updateStarship(starshipId, { hullIntegrity: integrity } as any);
+  },
+
+  /**
+   * Links a user to a starship.
+   */
+  async linkUserToStarship(userId: string, starshipId: string) {
+    dataLogger.logRequest('linkUserToStarship', { userId, starshipId });
+    try {
+      const data = { userId, starshipId, lastUpdate: serverTimestamp() };
+      // Note: We don't validate serverTimestamp() with UserStarshipSchema if it's strictly typed,
+      // but v.any() for lastUpdate should handle it.
+      v.parse(UserStarshipSchema, data);
+
+      await setDoc(doc(getFirestore(), `api/v1/userStarships/${userId}`), data);
+      dataLogger.logResponse('linkUserToStarship', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('linkUserToStarship', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Gets the starship ID for a user.
+   */
+  async getStarshipIdForUser(userId: string): Promise<string | null> {
+    dataLogger.logRequest('getStarshipIdForUser', { userId });
+    try {
+      const docRef = doc(getFirestore(), `api/v1/userStarships/${userId}`);
+      const snapshot = await getDoc(docRef);
+
+      const exists =
+        typeof snapshot.exists === 'function'
+          ? snapshot.exists()
+          : snapshot.exists;
+
+      if (!exists) {
+        dataLogger.logResponse('getStarshipIdForUser', null);
+        return null;
+      }
+      const data = snapshot.data() as UserStarship;
+      dataLogger.logResponse('getStarshipIdForUser', data.starshipId);
+      return data.starshipId;
+    } catch (error) {
+      dataLogger.logError('getStarshipIdForUser', error);
+      throw error;
+    }
   },
 };

@@ -20,6 +20,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
 } from '@react-native-firebase/auth';
+import { starshipService } from '../../data';
 
 type SignupScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -49,7 +50,18 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(getAuth(), email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        getAuth(),
+        email,
+        password,
+      );
+      if (userCredential.user) {
+        // By default, a new fleet's starship ID is the same as the captain's UID
+        await starshipService.linkUserToStarship(
+          userCredential.user.uid,
+          userCredential.user.uid,
+        );
+      }
       // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
