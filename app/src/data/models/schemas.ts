@@ -62,6 +62,11 @@ export const ModuleSchema = v.object({
     v.string('Real world room must be a string'),
     v.nonEmpty('Real world room name is required'),
   ),
+  /** Icon name from lucide-react-native */
+  icon: v.pipe(
+    v.string('Icon name must be a string'),
+    v.nonEmpty('Icon name is required'),
+  ),
   /** List of mission IDs that are incomplete in this module */
   incompleteMissions: v.array(
     v.string('Mission ID must be a string'),
