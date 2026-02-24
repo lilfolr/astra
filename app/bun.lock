@@ -8,7 +8,7 @@
         "@react-native-firebase/app": "^23.8.6",
         "@react-native-firebase/auth": "^23.8.6",
         "@react-native-firebase/firestore": "^23.8.6",
-        "@react-native/new-app-screen": "0.83.1",
+        "@react-native/new-app-screen": "0.84.0",
         "@react-navigation/native": "^7.1.28",
         "@react-navigation/stack": "^7.7.2",
         "lucide-react-native": "^0.563.0",
@@ -557,7 +557,7 @@
 
     "@react-native/metro-config": ["@react-native/metro-config@0.83.1", "", { "dependencies": { "@react-native/js-polyfills": "0.83.1", "@react-native/metro-babel-transformer": "0.83.1", "metro-config": "^0.83.3", "metro-runtime": "^0.83.3" } }, "sha512-1rjYZf62fCm6QAinHmRAKnJxIypX0VF/zBPd0qWvWABMZugrS0eACuIbk9Wk0StBod4yL8KnwEJyg77ak8xYzQ=="],
 
-    "@react-native/new-app-screen": ["@react-native/new-app-screen@0.83.1", "", { "peerDependencies": { "@types/react": "^19.1.0", "react": "*", "react-native": "*" } }, "sha512-xnozxb1NjjpbTYZWHPVHHFVHdmUQ3yQfO9wK29e0JKNg/uIUq4rJ7oXYwIWPsUFFxMlKsesu2lG2+VagbGwQsg=="],
+    "@react-native/new-app-screen": ["@react-native/new-app-screen@0.84.0", "", { "peerDependencies": { "@types/react": "^19.1.0", "react": "*", "react-native": "*" }, "optionalPeers": ["@types/react"] }, "sha512-feHjWBw4ehetsAmCwGnXEzecVGpai3Qv/ZTJyd+8KhRdQvg1a+RtyR4LNvR1vXdB0OC+gKleWN4okG2bdpt3kA=="],
 
     "@react-native/normalize-colors": ["@react-native/normalize-colors@0.83.1", "", {}, "sha512-84feABbmeWo1kg81726UOlMKAhcQyFXYz2SjRKYkS78QmfhVDhJ2o/ps1VjhFfBz0i/scDwT1XNv9GwmRIghkg=="],
 
