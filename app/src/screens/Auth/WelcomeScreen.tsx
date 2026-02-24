@@ -66,25 +66,25 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           </View>
 
           <View style={styles.titles}>
-            <Text style={styles.title}>NEURAL LINK</Text>
-            <Text style={styles.subtitle}>INITIALIZING CONNECTION...</Text>
+            <Text style={styles.title}>ASTRA</Text>
+            <Text style={styles.subtitle}>WELCOME HOME</Text>
           </View>
         </View>
 
         {/* Action Buttons */}
         <View style={styles.actions}>
           <SciFiButton
-            title="Initialize New Fleet"
+            title="Create New Family"
             variant="primary"
             onPress={() => navigation.navigate('Signup')}
           />
           <SciFiButton
-            title="Join Existing Fleet"
+            title="Join a Family"
             variant="secondary"
             onPress={() => navigation.navigate('JoinFleet')}
           />
           <SciFiButton
-            title="Commander Sign-In"
+            title="Parent Sign-In"
             variant="secondary"
             onPress={() => navigation.navigate('Login')}
           />
@@ -95,8 +95,8 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.terminalHeader}>
             <Terminal color={Colors.cyan} size={14} opacity={0.6} />
             <Text style={styles.terminalText}>
-              <Text style={{ color: Colors.cyan }}>SHIP_AI:</Text> Awaiting
-              instructions to bridge neural link.
+              <Text style={{ color: Colors.cyan }}>ASTRA:</Text> Ready to help
+              your family stay organized.
             </Text>
           </View>
         </View>

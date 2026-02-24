@@ -70,12 +70,12 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
       };
 
       await starshipService.addCrewMember(starshipId, newCrew);
-      Alert.alert('Success', `Unit ${name} has been recruited!`, [
+      Alert.alert('Success', `${name} has been added!`, [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
       console.error('Recruitment failed:', error);
-      Alert.alert('Recruitment Failed', error.message);
+      Alert.alert('Failed to add member', error.message);
     } finally {
       setLoading(false);
     }
@@ -101,17 +101,16 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.backButton}
                 icon={<ArrowLeft color={Colors.white} size={20} />}
               />
-              <Text style={styles.headerTitle}>RECRUIT NEW UNIT</Text>
+              <Text style={styles.headerTitle}>ADD FAMILY MEMBER</Text>
             </View>
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Register a new unit to the Astra Fleet. Enter biometric data
-                below.
+                Add a new member to your family below.
               </Text>
 
               <SciFiInput
-                label="Unit Name"
+                label="Name"
                 placeholder="Enter Name"
                 value={name}
                 onChangeText={setName}
@@ -120,7 +119,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? 'RECRUITING...' : 'RECRUIT UNIT'}
+                  title={loading ? 'ADDING...' : 'ADD MEMBER'}
                   onPress={handleRecruit}
                   variant="primary"
                   disabled={loading}

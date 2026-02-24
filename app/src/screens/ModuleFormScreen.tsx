@@ -49,34 +49,34 @@ interface Props {
 const COMMON_ROOMS = [
   {
     id: 'mess_hall',
-    name: 'MESS HALL',
+    name: 'KITCHEN',
     realWorldRoom: 'KITCHEN',
     icon: 'Utensils',
-    subtext: 'KITCHEN_OPS',
+    subtext: 'KITCHEN',
     IconComponent: Utensils,
   },
   {
     id: 'engine_room',
-    name: 'ENGINE ROOM',
+    name: 'LAUNDRY',
     realWorldRoom: 'LAUNDRY',
     icon: 'Zap',
-    subtext: 'LAUNDRY_CORE',
+    subtext: 'LAUNDRY',
     IconComponent: Zap,
   },
   {
     id: 'life_support',
-    name: 'LIFE SUPPORT',
+    name: 'BATHROOM',
     realWorldRoom: 'BATHROOM',
     icon: 'HeartPulse',
-    subtext: 'BATHROOM_SYS',
+    subtext: 'BATHROOM',
     IconComponent: HeartPulse,
   },
   {
     id: 'garden',
-    name: 'GARDEN',
+    name: 'OUTSIDE',
     realWorldRoom: 'OUTSIDE',
     icon: 'Leaf',
-    subtext: 'OUTSIDE_EXT',
+    subtext: 'OUTSIDE',
     IconComponent: Leaf,
   },
 ];
@@ -159,12 +159,12 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
     if (!existingModule) return;
 
     Alert.alert(
-      'DECOMMISSION MODULE',
-      `Are you sure you want to decommission the ${name}? This action cannot be undone.`,
+      'REMOVE ROOM',
+      `Are you sure you want to remove the ${name}? This will delete all chores in this room.`,
       [
-        { text: 'ABORT', style: 'cancel' },
+        { text: 'CANCEL', style: 'cancel' },
         {
-          text: 'CONFIRM DECOMMISSION',
+          text: 'REMOVE',
           style: 'destructive',
           onPress: async () => {
             setLoading(true);
@@ -197,7 +197,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
             <ArrowLeft color={Colors.cyan} size={24} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
-            {isEditing ? 'MODIFY_MODULE' : 'CONSTRUCT_MODULE'}
+            {isEditing ? 'EDIT ROOM' : 'ADD ROOM'}
           </Text>
           <View style={{ width: 24 }} />
         </View>
@@ -207,7 +207,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionLine} />
-              <Text style={styles.sectionTitle}>MODULE_ARCHITECTURE</Text>
+              <Text style={styles.sectionTitle}>ROOM TEMPLATES</Text>
               <View style={styles.sectionLine} />
             </View>
 
@@ -251,21 +251,21 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionLine} />
-              <Text style={styles.sectionTitle}>CUSTOM_ID_ASSIGNMENT</Text>
+              <Text style={styles.sectionTitle}>ROOM DETAILS</Text>
               <View style={styles.sectionLine} />
             </View>
 
             <SciFiInput
-              label="Sci-Fi Name"
+              label="Room Name"
               value={name}
               onChangeText={setName}
-              placeholder="ENTER_MODULE_NAME..."
+              placeholder="Enter room name..."
             />
             <SciFiInput
               label="Real World Room"
               value={realWorldRoom}
               onChangeText={setRealWorldRoom}
-              placeholder="ENTER_ROOM_TYPE..."
+              placeholder="Enter room type..."
             />
           </View>
 
@@ -273,7 +273,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <View style={styles.sectionLine} />
-              <Text style={styles.sectionTitle}>ICON_SELECTION</Text>
+              <Text style={styles.sectionTitle}>CHOOSE ICON</Text>
               <View style={styles.sectionLine} />
             </View>
 
@@ -300,7 +300,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={{ height: 40 }} />
 
           <SciFiButton
-            title={isEditing ? 'Update Module' : 'Create Room'}
+            title={isEditing ? 'Update Room' : 'Add Room'}
             onPress={handleSave}
             disabled={loading}
             icon={
@@ -326,7 +326,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
               disabled={loading}
             >
               <Trash2 color={Colors.neonOrange} size={16} />
-              <Text style={styles.deleteButtonText}>DECOMMISSION MODULE</Text>
+              <Text style={styles.deleteButtonText}>REMOVE ROOM</Text>
             </TouchableOpacity>
           )}
         </ScrollView>

@@ -53,17 +53,17 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.backButton}
                 icon={<ArrowLeft color={Colors.white} size={20} />}
               />
-              <Text style={styles.headerTitle}>FLEET UPLINK</Text>
+              <Text style={styles.headerTitle}>JOIN FAMILY</Text>
             </View>
 
             <View style={styles.form}>
               <Text style={styles.description}>
-                Enter the unique access code provided by your Fleet Commander to
-                join an existing starship.
+                Enter the invite code provided by your parent to join your
+                family.
               </Text>
 
               <SciFiInput
-                label="Identity_Token"
+                label="Invite Code"
                 placeholder="ACCESS CODE"
                 value={accessCode}
                 onChangeText={setAccessCode}
@@ -73,7 +73,7 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title="Board Ship"
+                  title="Join Family"
                   onPress={handleJoin}
                   variant="primary"
                   icon={

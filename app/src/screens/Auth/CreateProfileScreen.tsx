@@ -28,15 +28,12 @@ const CreateProfileScreen: React.FC<Props> = ({ navigation }) => {
             style={{ marginBottom: 20 }}
           />
           <Text style={styles.title}>CREATE PROFILE</Text>
-          <Text style={styles.subtitle}>
-            [ STAGE 2: BIOMETRIC INITIALIZATION ]
-          </Text>
+          <Text style={styles.subtitle}>[ STEP 2: SETUP ]</Text>
           <Text style={styles.description}>
-            This screen is under construction. Your neural link is being
-            established.
+            This screen is coming soon. Your profile is being set up.
           </Text>
           <SciFiButton
-            title="Proceed to Command Deck"
+            title="Go to Dashboard"
             onPress={() => navigation.navigate('CommandDeck')}
             variant="primary"
           />
