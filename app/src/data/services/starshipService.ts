@@ -51,6 +51,37 @@ export const starshipService = {
   },
 
   /**
+   * Updates an existing module.
+   */
+  async updateModule(
+    starshipId: string,
+    moduleId: string,
+    data: Partial<Module>,
+  ) {
+    dataLogger.logRequest('updateModule', { starshipId, moduleId, data });
+    try {
+      const PartialModuleSchema = v.partial(ModuleSchema);
+      const validated = v.parse(PartialModuleSchema, data);
+
+      await updateDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/modules/${moduleId}`,
+        ),
+        validated,
+      );
+      dataLogger.logResponse('updateModule', {
+        starshipId,
+        moduleId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('updateModule', error);
+      throw error;
+    }
+  },
+
+  /**
    * Adds a new mission to a starship.
    */
   async addMission(starshipId: string, mission: Mission) {
