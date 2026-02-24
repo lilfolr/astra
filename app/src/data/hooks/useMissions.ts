@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getFirestore, collection, onSnapshot } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+} from '@react-native-firebase/firestore';
 import * as v from 'valibot';
 import { dataLogger } from '../logger';
 import { MissionSchema, type Mission } from '../models';
@@ -21,34 +25,42 @@ export function useMissions(starshipId: string | null) {
     }
 
     dataLogger.logRequest('useMissions subscription', { starshipId });
-          const unsubscribe = onSnapshot(
-            collection(getFirestore(), `api/v1/starships/${starshipId}/missions`),
-            (snapshot) => {
-        dataLogger.logResponse(`useMissions snapshot (${starshipId})`, { count: snapshot.size });
-          try {
-            const missionsData = snapshot.docs.map((doc: any) => {
-              const data = doc.data();
-              const validated = v.parse(MissionSchema, data);
-              return { ...validated, id: doc.id };
-            });
-            setMissions(missionsData);
-            setError(null);
-          } catch (err: any) {
-            dataLogger.logError('useMissions validation', err);
-            if (v.isValiError(err)) {
-              setError(`Validation Error: ${err.issues.map((i: any) => i.message).join(', ')}`);
-            } else {
-              setError(err.message || 'An unknown error occurred during validation');
-            }
+    const unsubscribe = onSnapshot(
+      collection(getFirestore(), `api/v1/starships/${starshipId}/missions`),
+      snapshot => {
+        dataLogger.logResponse(`useMissions snapshot (${starshipId})`, {
+          count: snapshot.size,
+        });
+        try {
+          const missionsData = snapshot.docs.map((doc: any) => {
+            const data = doc.data();
+            const validated = v.parse(MissionSchema, data);
+            return { ...validated, id: doc.id };
+          });
+          setMissions(missionsData);
+          setError(null);
+        } catch (err: any) {
+          dataLogger.logError('useMissions validation', err);
+          if (v.isValiError(err)) {
+            setError(
+              `Validation Error: ${err.issues
+                .map((i: any) => i.message)
+                .join(', ')}`,
+            );
+          } else {
+            setError(
+              err.message || 'An unknown error occurred during validation',
+            );
           }
-          setLoading(false);
-        },
-        (err) => {
-          dataLogger.logError('useMissions firestore', err);
-          setError(err.message);
-          setLoading(false);
         }
-      );
+        setLoading(false);
+      },
+      err => {
+        dataLogger.logError('useMissions firestore', err);
+        setError(err.message);
+        setLoading(false);
+      },
+    );
 
     return () => unsubscribe();
   }, [starshipId]);

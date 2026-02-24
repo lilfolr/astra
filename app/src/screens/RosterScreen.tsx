@@ -23,7 +23,7 @@ import {
 import SciFiBackground from '../components/SciFiBackground';
 import Colors from '../theme/colors';
 import { useCrew, starshipService, type Crew } from '../data';
-import { getAuth } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
 interface CrewCardProps {
   member: Crew & { id: string };
@@ -42,7 +42,8 @@ const formatRelativeTime = (epoch: number) => {
 };
 
 const CrewCard = ({ member }: CrewCardProps) => {
-  const statusColor = member.role === 'captain' ? Colors.neonOrange : Colors.cyan;
+  const statusColor =
+    member.role === 'captain' ? Colors.neonOrange : Colors.cyan;
   const displayStatus = member.status || 'pending';
   const displayLastSeen = formatRelativeTime(member.lastSeen);
 
@@ -53,25 +54,22 @@ const CrewCard = ({ member }: CrewCardProps) => {
           <Text style={[styles.statusText, { color: statusColor }]}>
             LAST SEEN: {displayLastSeen}
           </Text>
-          <Circle
-            size={8}
-            fill={statusColor}
-            color={statusColor}
-          />
+          <Circle size={8} fill={statusColor} color={statusColor} />
         </View>
       </View>
 
       <View style={styles.cardBody}>
         <View style={styles.avatarContainer}>
-          <View style={[styles.avatarBorder, { borderColor: statusColor + '4D' }]}>
+          <View
+            style={[styles.avatarBorder, { borderColor: statusColor + '4D' }]}
+          >
             {member.avatar ? (
-              <Image
-                source={{ uri: member.avatar }}
-                style={styles.avatar}
-              />
+              <Image source={{ uri: member.avatar }} style={styles.avatar} />
             ) : (
               <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                <Text style={styles.avatarPlaceholderText}>{member.name.charAt(0)}</Text>
+                <Text style={styles.avatarPlaceholderText}>
+                  {member.name.charAt(0)}
+                </Text>
               </View>
             )}
           </View>
@@ -111,7 +109,10 @@ const CrewCard = ({ member }: CrewCardProps) => {
   );
 };
 
-type RosterScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Roster'>;
+type RosterScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Roster'
+>;
 
 interface Props {
   navigation: RosterScreenNavigationProp;
@@ -123,10 +124,12 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     const discoverStarship = async () => {
-      const currentUser = getAuth().currentUser;
+      const currentUser = auth().currentUser;
       if (currentUser) {
         try {
-          const starship = await starshipService.getStarshipByCaptainId(currentUser.uid);
+          const starship = await starshipService.getStarshipByCaptainId(
+            currentUser.uid,
+          );
           setStarshipId(starship?.starshipId || currentUser.uid);
         } catch (err) {
           console.error('Error discovering starship:', err);
@@ -174,9 +177,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.emptyText}>NO FAMILY MEMBERS FOUND</Text>
             </View>
           ) : (
-            crew.map((member) => (
-              <CrewCard key={member.id} member={member} />
-            ))
+            crew.map(member => <CrewCard key={member.id} member={member} />)
           )}
 
           <View style={{ height: 120 }} />

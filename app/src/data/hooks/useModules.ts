@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { getFirestore, collection, onSnapshot } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+} from '@react-native-firebase/firestore';
 import * as v from 'valibot';
 import { dataLogger } from '../logger';
 import { ModuleSchema, type Module } from '../models';
@@ -23,32 +27,40 @@ export function useModules(starshipId: string | null) {
     dataLogger.logRequest('useModules subscription', { starshipId });
     const unsubscribe = onSnapshot(
       collection(getFirestore(), `api/v1/starships/${starshipId}/modules`),
-      (snapshot) => {
-        dataLogger.logResponse(`useModules snapshot (${starshipId})`, { count: snapshot.size });
-          try {
-            const modulesData = snapshot.docs.map((doc: any) => {
-              const data = doc.data();
-              const validated = v.parse(ModuleSchema, data);
-              return { ...validated, id: doc.id };
-            });
-            setModules(modulesData);
-            setError(null);
-          } catch (err: any) {
-            dataLogger.logError('useModules validation', err);
-            if (v.isValiError(err)) {
-              setError(`Validation Error: ${err.issues.map((i: any) => i.message).join(', ')}`);
-            } else {
-              setError(err.message || 'An unknown error occurred during validation');
-            }
+      snapshot => {
+        dataLogger.logResponse(`useModules snapshot (${starshipId})`, {
+          count: snapshot.size,
+        });
+        try {
+          const modulesData = snapshot.docs.map((doc: any) => {
+            const data = doc.data();
+            const validated = v.parse(ModuleSchema, data);
+            return { ...validated, id: doc.id };
+          });
+          setModules(modulesData);
+          setError(null);
+        } catch (err: any) {
+          dataLogger.logError('useModules validation', err);
+          if (v.isValiError(err)) {
+            setError(
+              `Validation Error: ${err.issues
+                .map((i: any) => i.message)
+                .join(', ')}`,
+            );
+          } else {
+            setError(
+              err.message || 'An unknown error occurred during validation',
+            );
           }
-          setLoading(false);
-        },
-        (err) => {
-          dataLogger.logError('useModules firestore', err);
-          setError(err.message);
-          setLoading(false);
         }
-      );
+        setLoading(false);
+      },
+      err => {
+        dataLogger.logError('useModules firestore', err);
+        setError(err.message);
+        setLoading(false);
+      },
+    );
 
     return () => unsubscribe();
   }, [starshipId]);

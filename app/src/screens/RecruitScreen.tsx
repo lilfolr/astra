@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
@@ -9,9 +17,12 @@ import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
 import { ArrowLeft, UserPlus } from 'lucide-react-native';
 import { starshipService, type Crew } from '../data';
-import { getAuth } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
-type RecruitScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Recruit'>;
+type RecruitScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Recruit'
+>;
 
 interface Props {
   navigation: RecruitScreenNavigationProp;
@@ -29,15 +40,20 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const currentUser = getAuth().currentUser;
+      const currentUser = auth().currentUser;
       if (!currentUser) {
         throw new Error('No authenticated user found.');
       }
 
-      const starship = await starshipService.getStarshipByCaptainId(currentUser.uid);
+      const starship = await starshipService.getStarshipByCaptainId(
+        currentUser.uid,
+      );
       const starshipId = starship?.starshipId || currentUser.uid;
 
-      const registrationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const registrationCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
       const registrationCodeExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
 
       const newCrew: Crew = {
@@ -55,7 +71,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
 
       await starshipService.addCrewMember(starshipId, newCrew);
       Alert.alert('Success', `${name} has been added!`, [
-        { text: 'OK', onPress: () => navigation.goBack() }
+        { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
       console.error('Failed to add member:', error);
@@ -107,7 +123,13 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
                   onPress={handleRecruit}
                   variant="primary"
                   disabled={loading}
-                  icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={
+                    <UserPlus
+                      color={Colors.white}
+                      size={18}
+                      style={{ marginLeft: 8 }}
+                    />
+                  }
                 />
               </View>
             </View>

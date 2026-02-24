@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../App';
@@ -8,9 +16,12 @@ import SciFiButton from '../../components/SciFiButton';
 import SciFiInput from '../../components/SciFiInput';
 import Colors from '../../theme/colors';
 import { Mail, Lock, UserPlus, ArrowLeft } from 'lucide-react-native';
-import { getAuth, createUserWithEmailAndPassword } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 
-type SignupScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Signup'>;
+type SignupScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Signup'
+>;
 
 interface Props {
   navigation: SignupScreenNavigationProp;
@@ -35,7 +46,7 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
     setLoading(true);
     try {
-      await createUserWithEmailAndPassword(getAuth(), email, password);
+      await auth().createUserWithEmailAndPassword(email, password);
       // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
@@ -104,10 +115,16 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
 
               <View style={styles.actions}>
                 <SciFiButton
-                  title={loading ? "Creating Account..." : "Sign Up"}
+                  title={loading ? 'Creating Account...' : 'Sign Up'}
                   onPress={handleSignUp}
                   variant="primary"
-                  icon={<UserPlus color={Colors.white} size={18} style={{ marginLeft: 8 }} />}
+                  icon={
+                    <UserPlus
+                      color={Colors.white}
+                      size={18}
+                      style={{ marginLeft: 8 }}
+                    />
+                  }
                 />
                 <SciFiButton
                   title="Already have an account? Sign In"

@@ -36,16 +36,16 @@ jest.mock('lucide-react-native', () => {
   const React = require('react');
   const { View } = require('react-native');
   return {
-    Orbit: (props) => React.createElement(View, props),
-    Zap: (props) => React.createElement(View, props),
-    Terminal: (props) => React.createElement(View, props),
-    Mail: (props) => React.createElement(View, props),
-    Lock: (props) => React.createElement(View, props),
-    LogIn: (props) => React.createElement(View, props),
-    ArrowLeft: (props) => React.createElement(View, props),
-    Key: (props) => React.createElement(View, props),
-    Ship: (props) => React.createElement(View, props),
-    UserCircle: (props) => React.createElement(View, props),
-    UserPlus: (props) => React.createElement(View, props),
+    Orbit: props => React.createElement(View, props),
+    Zap: props => React.createElement(View, props),
+    Terminal: props => React.createElement(View, props),
+    Mail: props => React.createElement(View, props),
+    Lock: props => React.createElement(View, props),
+    LogIn: props => React.createElement(View, props),
+    ArrowLeft: props => React.createElement(View, props),
+    Key: props => React.createElement(View, props),
+    Ship: props => React.createElement(View, props),
+    UserCircle: props => React.createElement(View, props),
+    UserPlus: props => React.createElement(View, props),
   };
 });

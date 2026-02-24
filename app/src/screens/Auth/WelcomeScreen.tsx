@@ -8,7 +8,10 @@ import SciFiButton from '../../components/SciFiButton';
 import Colors from '../../theme/colors';
 import { Orbit, Zap, Terminal } from 'lucide-react-native';
 
-type WelcomeScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Welcome'>;
+type WelcomeScreenNavigationProp = StackNavigationProp<
+  AuthStackParamList,
+  'Welcome'
+>;
 
 interface Props {
   navigation: WelcomeScreenNavigationProp;
@@ -30,7 +33,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
           duration: 2000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   }, [pulseAnim]);
 
@@ -53,7 +56,7 @@ const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
             <Animated.View
               style={[
                 styles.reactorRing,
-                { transform: [{ scale: pulseAnim }], opacity: 0.3 }
+                { transform: [{ scale: pulseAnim }], opacity: 0.3 },
               ]}
             />
             <View style={[styles.reactorRing, styles.reactorRingInner]} />
