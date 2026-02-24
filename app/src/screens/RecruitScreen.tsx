@@ -54,7 +54,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
         .toString(36)
         .substring(2, 8)
         .toUpperCase();
-      const registrationCodeExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+      const registrationCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minute expiry
 
       const newCrew: Crew = {
         name,
