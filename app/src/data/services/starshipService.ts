@@ -4,6 +4,7 @@ import {
   doc,
   addDoc,
   updateDoc,
+  deleteDoc,
   query,
   where,
   limit,
@@ -46,6 +47,60 @@ export const starshipService = {
       });
     } catch (error) {
       dataLogger.logError('updateStarship', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletes an existing module.
+   */
+  async deleteModule(starshipId: string, moduleId: string) {
+    dataLogger.logRequest('deleteModule', { starshipId, moduleId });
+    try {
+      await deleteDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/modules/${moduleId}`,
+        ),
+      );
+      dataLogger.logResponse('deleteModule', {
+        starshipId,
+        moduleId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('deleteModule', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Updates an existing module.
+   */
+  async updateModule(
+    starshipId: string,
+    moduleId: string,
+    data: Partial<Module>,
+  ) {
+    dataLogger.logRequest('updateModule', { starshipId, moduleId, data });
+    try {
+      const PartialModuleSchema = v.partial(ModuleSchema);
+      const validated = v.parse(PartialModuleSchema, data);
+
+      await updateDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/modules/${moduleId}`,
+        ),
+        validated,
+      );
+      dataLogger.logResponse('updateModule', {
+        starshipId,
+        moduleId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('updateModule', error);
       throw error;
     }
   },

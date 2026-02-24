@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from '../theme/colors';
@@ -19,9 +20,14 @@ import {
   ShoppingBag,
   CircleDollarSign,
   Zap,
+  Plus,
+  ArrowRight,
 } from 'lucide-react-native';
+import * as Icons from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
+import { useModules, starshipService } from '../data';
+import { getAuth } from '@react-native-firebase/auth';
 
 type CommandDeckScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -34,6 +40,26 @@ interface Props {
 
 const CommandDeck: React.FC<Props> = ({ navigation }) => {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
+  const [starshipId, setStarshipId] = useState<string | null>(null);
+  const { modules, loading: modulesLoading } = useModules(starshipId);
+
+  useEffect(() => {
+    const discoverStarship = async () => {
+      const currentUser = getAuth().currentUser;
+      if (currentUser) {
+        try {
+          const starship = await starshipService.getStarshipByCaptainId(
+            currentUser.uid,
+          );
+          setStarshipId(starship?.starshipId || currentUser.uid);
+        } catch (err) {
+          console.error('Error discovering starship:', err);
+          setStarshipId(currentUser.uid);
+        }
+      }
+    };
+    discoverStarship();
+  }, []);
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -136,11 +162,74 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             </View>
           </View>
 
-          {/* Ship Schematic Placeholder */}
+          {/* Ship Schematic / Modules */}
           <View style={styles.schematicContainer}>
-            <Text style={styles.schematicTitle}>SHIP SCHEMATIC: HOME BASE</Text>
+            <View style={styles.schematicHeader}>
+              <Text style={styles.schematicTitle}>
+                SHIP SCHEMATIC: HOME BASE
+              </Text>
+              <TouchableOpacity
+                style={styles.addModuleButton}
+                onPress={() =>
+                  starshipId &&
+                  navigation.navigate('ModuleForm', { starshipId })
+                }
+              >
+                <Plus color={Colors.deepObsidian} size={14} />
+                <Text style={styles.addModuleButtonText}>CONSTRUCT</Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.schematicPlaceholder}>
-              {/* Blank for now */}
+              {modulesLoading ? (
+                <ActivityIndicator color={Colors.cyan} />
+              ) : modules.length === 0 ? (
+                <TouchableOpacity
+                  style={styles.emptyModules}
+                  onPress={() =>
+                    starshipId &&
+                    navigation.navigate('ModuleForm', { starshipId })
+                  }
+                >
+                  <Plus color={Colors.cyan} size={32} opacity={0.5} />
+                  <Text style={styles.emptyModulesText}>CONSTRUCT_MODULE</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.moduleList}>
+                  {modules.map(module => {
+                    const IconComponent =
+                      (Icons as any)[module.icon] || Icons.Box;
+                    return (
+                      <TouchableOpacity
+                        key={module.id}
+                        style={styles.moduleCard}
+                        onPress={() =>
+                          starshipId &&
+                          navigation.navigate('ModuleForm', {
+                            starshipId,
+                            module,
+                          })
+                        }
+                      >
+                        <View style={styles.moduleIconContainer}>
+                          <IconComponent color={Colors.cyan} size={20} />
+                        </View>
+                        <View style={styles.moduleInfo}>
+                          <Text style={styles.moduleName}>{module.name}</Text>
+                          <Text style={styles.moduleRealName}>
+                            {module.realWorldRoom}
+                          </Text>
+                        </View>
+                        <ArrowRight
+                          color={Colors.cyan}
+                          size={16}
+                          opacity={0.5}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -354,13 +443,32 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 300,
   },
+  schematicHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   schematicTitle: {
     color: Colors.cyan,
     fontSize: 12,
-    textAlign: 'center',
     letterSpacing: 2,
     fontWeight: 'bold',
-    marginBottom: 10,
+  },
+  addModuleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.cyan,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    gap: 4,
+  },
+  addModuleButtonText: {
+    color: Colors.deepObsidian,
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
   schematicPlaceholder: {
     flex: 1,
@@ -369,6 +477,55 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(0, 255, 255, 0.2)',
     borderStyle: 'dashed',
+    padding: 15,
+    justifyContent: 'center',
+  },
+  emptyModules: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  emptyModulesText: {
+    color: Colors.cyan,
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    opacity: 0.6,
+  },
+  moduleList: {
+    gap: 10,
+  },
+  moduleCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(16, 30, 35, 0.6)',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 255, 0.1)',
+  },
+  moduleIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  moduleInfo: {
+    flex: 1,
+  },
+  moduleName: {
+    color: Colors.white,
+    fontSize: 14,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  moduleRealName: {
+    color: 'rgba(0, 255, 255, 0.5)',
+    fontSize: 10,
+    fontWeight: '600',
   },
   tabBar: {
     position: 'absolute',
