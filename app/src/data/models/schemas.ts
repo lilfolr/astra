@@ -106,6 +106,8 @@ export const MissionSchema = v.object({
   ),
   /** UID of the crew member assigned to this mission */
   assignedTo: v.string('Assigned To must be a valid user ID'),
+  /** ID of the module this mission belongs to */
+  moduleId: v.optional(v.string('Module ID must be a string')),
   /** How hard the mission is */
   difficulty: MissionDifficultySchema,
   /** Current state of the mission */

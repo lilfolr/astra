@@ -18,6 +18,7 @@ import CommandDeck from './screens/CommandDeck';
 import RosterScreen from './screens/RosterScreen';
 import RecruitScreen from './screens/RecruitScreen';
 import ModuleFormScreen from './screens/ModuleFormScreen';
+import MissionsScreen from './screens/MissionsScreen';
 import { Module } from './data/models/schemas';
 
 export type AuthStackParamList = {
@@ -30,6 +31,7 @@ export type AuthStackParamList = {
   Roster: undefined;
   Recruit: undefined;
   ModuleForm: { starshipId: string; module?: Module & { id: string } };
+  Missions: undefined;
 };
 
 const Stack = createStackNavigator<AuthStackParamList>();
@@ -60,6 +62,7 @@ function App() {
             /* Authenticated Stack */
             <>
               <Stack.Screen name="CommandDeck" component={CommandDeck} />
+              <Stack.Screen name="Missions" component={MissionsScreen} />
               <Stack.Screen name="Roster" component={RosterScreen} />
               <Stack.Screen name="Recruit" component={RecruitScreen} />
               <Stack.Screen name="ModuleForm" component={ModuleFormScreen} />
