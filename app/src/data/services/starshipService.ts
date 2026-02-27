@@ -312,4 +312,90 @@ export const starshipService = {
       throw error;
     }
   },
+
+  /**
+   * Joins a starship using a registration code.
+   *
+   * REQUIREMENTS OUTSIDE THIS APP:
+   * 1. Firestore Index: A collection group index on 'crew' sub-collection for 'registrationCode' field is required
+   *    if we were searching across all starships. However, here we have starshipId, so a standard index is enough.
+   * 2. Firestore Security Rules:
+   *    match /api/v1/starships/{starshipId}/crew/{crewId} {
+   *      allow read: if true; // Or more restrictive based on code knowledge
+   *      allow update: if request.auth != null && resource.data.registrationCode == request.resource.data.registrationCode;
+   *    }
+   * 3. Cloud Function (Recommended): Ideally, this logic should be in a Cloud Function to prevent
+   *    unauthorized updates to crew records and ensure atomicity.
+   */
+  async joinStarshipWithCode(starshipId: string, code: string, userId: string) {
+    dataLogger.logRequest('joinStarshipWithCode', { starshipId, code, userId });
+    try {
+      const crewCollection = collection(
+        getFirestore(),
+        `api/v1/starships/${starshipId}/crew`,
+      );
+      const q = query(
+        crewCollection,
+        where('registrationCode', '==', code),
+        limit(1),
+      );
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        throw new Error('Invalid registration code.');
+      }
+
+      const crewDoc = snapshot.docs[0];
+      const crewData = crewDoc.data() as Crew;
+
+      if (crewData.registrationCodeExpiry < Date.now()) {
+        throw new Error('Registration code has expired.');
+      }
+
+      // Link user to starship
+      await this.linkUserToStarship(userId, starshipId);
+
+      // Update crew member record
+      await this.updateCrewMember(starshipId, crewDoc.id, {
+        uid: userId,
+        status: 'stable',
+        registrationCode: '', // Clear the code
+        registrationCodeExpiry: 0,
+        lastSeen: Date.now(),
+      });
+
+      dataLogger.logResponse('joinStarshipWithCode', { status: 'success' });
+      return { starshipId, crewId: crewDoc.id };
+    } catch (error) {
+      dataLogger.logError('joinStarshipWithCode', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Regenerates a registration code for a crew member.
+   */
+  async regenerateRegistrationCode(starshipId: string, crewId: string) {
+    dataLogger.logRequest('regenerateRegistrationCode', { starshipId, crewId });
+    try {
+      const registrationCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
+      const registrationCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+      await this.updateCrewMember(starshipId, crewId, {
+        registrationCode,
+        registrationCodeExpiry,
+      });
+
+      dataLogger.logResponse('regenerateRegistrationCode', {
+        registrationCode,
+      });
+      return { registrationCode, registrationCodeExpiry };
+    } catch (error) {
+      dataLogger.logError('regenerateRegistrationCode', error);
+      throw error;
+    }
+  },
 };

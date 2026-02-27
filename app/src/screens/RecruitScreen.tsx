@@ -18,6 +18,7 @@ import Colors from '../theme/colors';
 import { ArrowLeft, UserPlus } from 'lucide-react-native';
 import { starshipService, type Crew } from '../data';
 import { getAuth } from '@react-native-firebase/auth';
+import InviteCodeModal from '../components/InviteCodeModal';
 
 type RecruitScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -31,6 +32,13 @@ interface Props {
 const RecruitScreen: React.FC<Props> = ({ navigation }) => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [inviteData, setInviteData] = useState<{
+    starshipId: string;
+    code: string;
+    expiry: number;
+    memberName: string;
+  } | null>(null);
 
   const handleRecruit = async () => {
     if (!name) {
@@ -54,7 +62,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
         .toString(36)
         .substring(2, 8)
         .toUpperCase();
-      const registrationCodeExpiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+      const registrationCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
 
       const newCrew: Crew = {
         name,
@@ -70,9 +78,13 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
       };
 
       await starshipService.addCrewMember(starshipId, newCrew);
-      Alert.alert('Success', `${name} has been added!`, [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
+      setInviteData({
+        starshipId,
+        code: registrationCode,
+        expiry: registrationCodeExpiry,
+        memberName: name,
+      });
+      setShowModal(true);
     } catch (error: any) {
       console.error('Recruitment failed:', error);
       Alert.alert('Failed to add member', error.message);
@@ -84,6 +96,19 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SciFiBackground>
       <SafeAreaView style={styles.container}>
+        {inviteData && (
+          <InviteCodeModal
+            visible={showModal}
+            onClose={() => {
+              setShowModal(false);
+              navigation.goBack();
+            }}
+            starshipId={inviteData.starshipId}
+            registrationCode={inviteData.code}
+            expiry={inviteData.expiry}
+            memberName={inviteData.memberName}
+          />
+        )}
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.keyboardView}

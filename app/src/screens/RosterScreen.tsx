@@ -24,9 +24,12 @@ import SciFiBackground from '../components/SciFiBackground';
 import Colors from '../theme/colors';
 import { useCrew, starshipService, type Crew } from '../data';
 import { getAuth } from '@react-native-firebase/auth';
+import InviteCodeModal from '../components/InviteCodeModal';
 
 interface CrewCardProps {
   member: Crew & { id: string };
+  starshipId: string | null;
+  onViewInvite: (member: Crew & { id: string }) => void;
 }
 
 const formatRelativeTime = (epoch: number) => {
@@ -41,7 +44,7 @@ const formatRelativeTime = (epoch: number) => {
   return `${diffDays}D AGO`;
 };
 
-const CrewCard = ({ member }: CrewCardProps) => {
+const CrewCard = ({ member, onViewInvite }: CrewCardProps) => {
   const statusColor =
     member.role === 'captain' ? Colors.neonOrange : Colors.cyan;
   const displayStatus = member.status || 'pending';
@@ -96,10 +99,17 @@ const CrewCard = ({ member }: CrewCardProps) => {
           <Award size={14} color={Colors.grey} />
           <Text style={styles.actionButtonText}>EDIT LEVEL/POINTS</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <RotateCcw size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>VIEW INVITE CODE</Text>
-        </TouchableOpacity>
+        {member.status === 'pending' && (
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => onViewInvite(member)}
+          >
+            <RotateCcw size={14} color={Colors.cyan} />
+            <Text style={[styles.actionButtonText, { color: Colors.cyan }]}>
+              INVITE CODE
+            </Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity style={styles.actionButton}>
           <UserX size={14} color={Colors.grey} />
           <Text style={styles.actionButtonText}>DISABLE</Text>
@@ -121,6 +131,39 @@ interface Props {
 const RosterScreen: React.FC<Props> = ({ navigation }) => {
   const [starshipId, setStarshipId] = useState<string | null>(null);
   const { crew, loading, error } = useCrew(starshipId);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<
+    (Crew & { id: string }) | null
+  >(null);
+
+  const handleViewInvite = async (member: Crew & { id: string }) => {
+    if (!starshipId) return;
+
+    // If code is expired or missing, regenerate it
+    if (
+      member.registrationCodeExpiry < Date.now() ||
+      !member.registrationCode
+    ) {
+      try {
+        const { registrationCode, registrationCodeExpiry } =
+          await starshipService.regenerateRegistrationCode(
+            starshipId,
+            member.id,
+          );
+        setSelectedMember({
+          ...member,
+          registrationCode,
+          registrationCodeExpiry,
+        });
+      } catch (err) {
+        console.error('Failed to regenerate code:', err);
+        return;
+      }
+    } else {
+      setSelectedMember(member);
+    }
+    setShowInviteModal(true);
+  };
 
   useEffect(() => {
     const discoverStarship = async () => {
@@ -177,11 +220,29 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.emptyText}>NO FAMILY MEMBERS FOUND</Text>
             </View>
           ) : (
-            crew.map(member => <CrewCard key={member.id} member={member} />)
+            crew.map(member => (
+              <CrewCard
+                key={member.id}
+                member={member}
+                starshipId={starshipId}
+                onViewInvite={handleViewInvite}
+              />
+            ))
           )}
 
           <View style={{ height: 120 }} />
         </ScrollView>
+
+        {selectedMember && starshipId && (
+          <InviteCodeModal
+            visible={showInviteModal}
+            onClose={() => setShowInviteModal(false)}
+            starshipId={starshipId}
+            registrationCode={selectedMember.registrationCode}
+            expiry={selectedMember.registrationCodeExpiry}
+            memberName={selectedMember.name}
+          />
+        )}
 
         {/* Footer Action */}
         <View style={styles.footer}>
