@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -23,8 +23,7 @@ import {
 import SciFiBackground from '../components/SciFiBackground';
 import RegistrationCodeModal from '../components/RegistrationCodeModal';
 import Colors from '../theme/colors';
-import { useCrew, starshipService, type Crew } from '../data';
-import { getAuth } from '@react-native-firebase/auth';
+import { useCrew, useDiscoverStarship, type Crew } from '../data';
 
 interface CrewCardProps {
   member: Crew & { id: string };
@@ -124,39 +123,19 @@ interface Props {
 }
 
 const RosterScreen: React.FC<Props> = ({ navigation }) => {
-  const [starshipId, setStarshipId] = useState<string | null>(null);
-  const { crew, loading, error } = useCrew(starshipId);
+  const {
+    starshipId,
+    loading: discovering,
+    error: discoverError,
+  } = useDiscoverStarship();
+  const { crew, loading: loadingCrew, error: crewError } = useCrew(starshipId);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMember, setSelectedMember] = useState<
     (Crew & { id: string }) | null
   >(null);
 
-  useEffect(() => {
-    const discoverStarship = async () => {
-      const currentUser = getAuth().currentUser;
-      if (currentUser) {
-        try {
-          // Try captain lookup first
-          let starship = await starshipService.getStarshipByCaptainId(
-            currentUser.uid,
-          );
-
-          // If not a captain, try crew lookup
-          if (!starship) {
-            starship = await starshipService.getStarshipByCrewUid(
-              currentUser.uid,
-            );
-          }
-
-          setStarshipId(starship?.starshipId || currentUser.uid);
-        } catch (err) {
-          console.error('Error discovering starship:', err);
-          setStarshipId(currentUser.uid);
-        }
-      }
-    };
-    discoverStarship();
-  }, []);
+  const loading = discovering || loadingCrew;
+  const error = discoverError || crewError;
 
   const handleViewToken = (member: Crew & { id: string }) => {
     setSelectedMember(member);

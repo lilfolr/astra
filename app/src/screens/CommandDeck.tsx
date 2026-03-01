@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -26,8 +26,7 @@ import {
 import * as Icons from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
-import { useModules, starshipService } from '../data';
-import { getAuth } from '@react-native-firebase/auth';
+import { useModules, useDiscoverStarship } from '../data';
 
 type CommandDeckScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -40,46 +39,10 @@ interface Props {
 
 const CommandDeck: React.FC<Props> = ({ navigation }) => {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
-  const [starshipId, setStarshipId] = useState<string | null>(null);
+  const { starshipId, loading: discovering } = useDiscoverStarship();
   const { modules, loading: modulesLoading } = useModules(starshipId);
 
-  useEffect(() => {
-    const discoverStarship = async () => {
-      const currentUser = getAuth().currentUser;
-      if (currentUser) {
-        try {
-          // 1. Try to get starship ID from the new mapping collection (fastest)
-          let sid = await starshipService.getStarshipIdForUser(currentUser.uid);
-
-          if (!sid) {
-            // 2. Fallback to searching by captain ID
-            let starship = await starshipService.getStarshipByCaptainId(
-              currentUser.uid,
-            );
-
-            // 3. If not a captain, try crew lookup
-            if (!starship) {
-              starship = await starshipService.getStarshipByCrewUid(
-                currentUser.uid,
-              );
-            }
-
-            sid = starship?.starshipId || currentUser.uid;
-
-            // 4. Establish the mapping for future fast lookups
-            await starshipService.linkUserToStarship(currentUser.uid, sid);
-          }
-
-          setStarshipId(sid);
-        } catch (err) {
-          console.error('Error discovering starship:', err);
-          // Fallback to UID as starshipId in case of error
-          setStarshipId(currentUser.uid);
-        }
-      }
-    };
-    discoverStarship();
-  }, []);
+  const loading = discovering || modulesLoading;
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -199,7 +162,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             </View>
 
             <View style={styles.schematicPlaceholder}>
-              {modulesLoading ? (
+              {loading ? (
                 <ActivityIndicator color={Colors.cyan} />
               ) : modules.length === 0 ? (
                 <TouchableOpacity

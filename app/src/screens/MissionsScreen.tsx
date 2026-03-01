@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   StyleSheet,
   View,
@@ -29,6 +29,7 @@ import {
   useMissions,
   useModules,
   useCrew,
+  useDiscoverStarship,
   starshipService,
   type Mission,
 } from '../data';
@@ -47,8 +48,13 @@ type TabType = 'my' | 'all' | 'available';
 
 const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<TabType>('my');
-  const [starshipId, setStarshipId] = useState<string | null>(null);
   const currentUser = getAuth().currentUser;
+
+  const {
+    starshipId,
+    loading: discovering,
+    error: discoverError,
+  } = useDiscoverStarship();
 
   const {
     missions,
@@ -56,30 +62,17 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
     error: missionsError,
   } = useMissions(starshipId);
   const { modules, loading: modulesLoading } = useModules(starshipId);
-  const { crew } = useCrew(starshipId);
+  const { crew, loading: crewLoading } = useCrew(starshipId);
+
+  const loading =
+    discovering || missionsLoading || modulesLoading || crewLoading;
+  const error = discoverError || missionsError;
 
   const myCrewMember = useMemo(() => {
     return crew.find(c => c.uid === currentUser?.uid);
   }, [crew, currentUser]);
 
   const isCaptain = myCrewMember?.role === 'captain';
-
-  useEffect(() => {
-    const discoverStarship = async () => {
-      if (currentUser) {
-        try {
-          const starship = await starshipService.getStarshipByCaptainId(
-            currentUser.uid,
-          );
-          setStarshipId(starship?.starshipId || currentUser.uid);
-        } catch (err) {
-          console.error('Error discovering starship:', err);
-          setStarshipId(currentUser.uid);
-        }
-      }
-    };
-    discoverStarship();
-  }, [currentUser]);
 
   const filteredMissions = useMemo(() => {
     if (!missions) return [];
@@ -342,16 +335,14 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {missionsLoading || modulesLoading ? (
+          {loading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
               <Text style={styles.loadingText}>ACCESSING CHORE DATA...</Text>
             </View>
-          ) : missionsError ? (
+          ) : error ? (
             <View style={styles.centered}>
-              <Text style={styles.errorText}>
-                UPLINK ERROR: {missionsError}
-              </Text>
+              <Text style={styles.errorText}>UPLINK ERROR: {error}</Text>
             </View>
           ) : filteredMissions.length === 0 ? (
             <View style={styles.centered}>
