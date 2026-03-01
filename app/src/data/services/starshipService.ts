@@ -297,6 +297,7 @@ export const starshipService = {
       .toString(36)
       .substring(2, 8)
       .toUpperCase();
+    //FIXME: Enforce this on the client side for now, but should ideally be enforced server-side with security rules or Cloud Functions.
     const registrationCodeExpiry = Date.now() + 10 * 60 * 1000;
 
     await this.updateCrewMember(starshipId, crewId, {
@@ -322,7 +323,9 @@ export const starshipService = {
     const snapshot = await getDoc(docRef);
 
     const exists =
-      typeof snapshot.exists === 'function' ? snapshot.exists() : snapshot.exists;
+      typeof snapshot.exists === 'function'
+        ? snapshot.exists()
+        : snapshot.exists;
 
     if (!exists) {
       throw new Error('Crew member not found');

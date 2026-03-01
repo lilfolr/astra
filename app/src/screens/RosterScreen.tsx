@@ -15,7 +15,6 @@ import { AuthStackParamList } from '../App';
 import {
   FileText,
   Award,
-  RotateCcw,
   UserX,
   PlusCircle,
   Circle,
@@ -220,8 +219,6 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
             onClose={() => setModalVisible(false)}
             starshipId={starshipId}
             crewId={selectedMember.id}
-            initialCode={selectedMember.registrationCode}
-            initialExpiry={selectedMember.registrationCodeExpiry}
           />
         )}
 

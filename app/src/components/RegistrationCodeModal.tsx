@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Modal,
   View,
@@ -17,8 +17,6 @@ interface RegistrationCodeModalProps {
   onClose: () => void;
   starshipId: string;
   crewId: string;
-  initialCode: string;
-  initialExpiry: number;
 }
 
 const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
@@ -26,20 +24,11 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
   onClose,
   starshipId,
   crewId,
-  initialCode,
-  initialExpiry,
 }) => {
-  const [code, setCode] = useState(initialCode);
-  const [expiry, setExpiry] = useState(initialExpiry);
+  const [code, setCode] = useState('');
+  const [expiry, setExpiry] = useState(0);
   const [timeLeft, setTimeLeft] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (visible) {
-      setCode(initialCode);
-      setExpiry(initialExpiry);
-    }
-  }, [visible, initialCode, initialExpiry]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!visible) return;
@@ -61,7 +50,7 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
     return () => clearInterval(timer);
   }, [expiry, visible]);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setLoading(true);
     try {
       const result = await starshipService.refreshRegistrationCode(
@@ -75,7 +64,13 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [crewId, starshipId]);
+
+  useEffect(() => {
+    if (visible) {
+      handleRefresh();
+    }
+  }, [visible, handleRefresh]);
 
   const qrData = JSON.stringify({
     s: starshipId,
@@ -101,12 +96,7 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
 
           <View style={styles.qrContainer}>
             <View style={styles.qrWrapper}>
-              <QRCode
-                value={qrData}
-                size={200}
-                color={Colors.cyan}
-                backgroundColor="transparent"
-              />
+              <QRCode value={qrData} size={200} backgroundColor="transparent" />
             </View>
             {loading && (
               <View style={styles.loadingOverlay}>
@@ -121,7 +111,7 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
           </View>
 
           <View style={styles.expiryContainer}>
-            <Text style={styles.expiryLabel}>SIGNAL STRENGTH (EXPIRY)</Text>
+            <Text style={styles.expiryLabel}>EXPIRY</Text>
             <Text
               style={[
                 styles.expiryValue,
