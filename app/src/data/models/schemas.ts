@@ -165,9 +165,15 @@ export const CrewSchema = v.object({
   /** Date the crew member was created (epoch) */
   createdDate: v.number('Created date must be a number'),
   /** Code used for registration/joining */
-  registrationCode: v.string('Registration code must be a string'),
+  registrationCode: v.optional(
+    v.string('Registration code must be a string'),
+    '',
+  ),
   /** Expiry time for the registration code (epoch) */
-  registrationCodeExpiry: v.number('Registration code expiry must be a number'),
+  registrationCodeExpiry: v.optional(
+    v.number('Registration code expiry must be a number'),
+    0,
+  ),
   /** Optional avatar URL */
   avatar: v.optional(v.string('Avatar must be a string')),
   /** Current status of the crew member link */

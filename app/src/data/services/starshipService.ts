@@ -12,8 +12,10 @@ import {
   limit,
   getDocs,
   serverTimestamp,
+  collectionGroup,
 } from '@react-native-firebase/firestore';
 import * as v from 'valibot';
+import { getAuth, signInAnonymously } from '@react-native-firebase/auth';
 import { dataLogger } from '../logger';
 import {
   StarshipSchema,
@@ -287,6 +289,100 @@ export const starshipService = {
   },
 
   /**
+   * Refreshes the registration code for a crew member.
+   * Sets a new 6-character code and 10-minute expiry.
+   */
+  async refreshRegistrationCode(starshipId: string, crewId: string) {
+    const registrationCode = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    //FIXME: Enforce this on the client side for now, but should ideally be enforced server-side with security rules or Cloud Functions.
+    const registrationCodeExpiry = Date.now() + 10 * 60 * 1000;
+
+    await this.updateCrewMember(starshipId, crewId, {
+      registrationCode,
+      registrationCodeExpiry,
+    });
+
+    return { registrationCode, registrationCodeExpiry };
+  },
+
+  /**
+   * Validates a registration code for a crew member.
+   */
+  async validateRegistrationCode(
+    starshipId: string,
+    crewId: string,
+    code: string,
+  ) {
+    const docRef = doc(
+      getFirestore(),
+      `api/v1/starships/${starshipId}/crew/${crewId}`,
+    );
+    const snapshot = await getDoc(docRef);
+
+    const exists =
+      typeof snapshot.exists === 'function'
+        ? snapshot.exists()
+        : snapshot.exists;
+
+    if (!exists) {
+      throw new Error('Crew member not found');
+    }
+
+    const data = snapshot.data() as Crew;
+    if (data.registrationCode !== code) {
+      throw new Error('Invalid registration code');
+    }
+
+    if (Date.now() > data.registrationCodeExpiry) {
+      throw new Error('Registration code has expired');
+    }
+
+    return true;
+  },
+
+  /**
+   * Joins a starship as a crew member using a registration code.
+   * This handles anonymous authentication if the user is not logged in.
+   *
+   * NOTE: In a production environment, this logic should be moved to a
+   * secure server-side environment (e.g., Firebase Cloud Functions) to
+   * prevent unauthorized users from claiming crew slots.
+   * The server should validate the registration code before linking the UID.
+   */
+  async joinStarshipAsCrew(starshipId: string, crewId: string, code: string) {
+    dataLogger.logRequest('joinStarshipAsCrew', { starshipId, crewId, code });
+
+    try {
+      // 1. Validate the code
+      await this.validateRegistrationCode(starshipId, crewId, code);
+
+      // 2. Ensure user is authenticated
+      let currentUser = getAuth().currentUser;
+      if (!currentUser) {
+        const credential = await signInAnonymously(getAuth());
+        currentUser = credential.user;
+      }
+
+      // 3. Link the user to the crew member
+      // TODO: This write should ideally be protected by a Cloud Function that verifies the code.
+      await this.updateCrewMember(starshipId, crewId, {
+        uid: currentUser.uid,
+        status: 'stable',
+        lastSeen: Date.now(),
+      });
+
+      dataLogger.logResponse('joinStarshipAsCrew', { status: 'success' });
+      return currentUser;
+    } catch (error) {
+      dataLogger.logError('joinStarshipAsCrew', error);
+      throw error;
+    }
+  },
+
+  /**
    * Gets the starship ID for a user.
    */
   async getStarshipIdForUser(userId: string): Promise<string | null> {
@@ -309,6 +405,61 @@ export const starshipService = {
       return data.starshipId;
     } catch (error) {
       dataLogger.logError('getStarshipIdForUser', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Finds a starship by a crew member's UID.
+   *
+   * NOTE: This requires a Firestore collection group index on the 'crew'
+   * collection for the 'uid' field. If not present, this query will fail.
+   * Link to create index: https://console.firebase.google.com/project/_/database/firestore/indices
+   */
+  async getStarshipByCrewUid(uid: string): Promise<Starship | null> {
+    dataLogger.logRequest('getStarshipByCrewUid', { uid });
+    try {
+      const q = query(
+        collectionGroup(getFirestore(), 'crew'),
+        where('uid', '==', uid),
+        limit(1),
+      );
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        dataLogger.logResponse('getStarshipByCrewUid', null);
+        return null;
+      }
+
+      const crewDoc = snapshot.docs[0];
+      const starshipDocRef = crewDoc.ref.parent.parent;
+      if (!starshipDocRef) {
+        return null;
+      }
+
+      const starshipSnapshot = await getDoc(starshipDocRef);
+      const exists =
+        typeof starshipSnapshot.exists === 'function'
+          ? starshipSnapshot.exists()
+          : starshipSnapshot.exists;
+
+      if (!exists) {
+        return null;
+      }
+
+      const data = starshipSnapshot.data();
+      if (!data) {
+        return null;
+      }
+
+      const validated = v.parse(StarshipSchema, {
+        ...(data as object),
+        starshipId: starshipSnapshot.id,
+      });
+      dataLogger.logResponse('getStarshipByCrewUid', validated);
+      return validated;
+    } catch (error) {
+      dataLogger.logError('getStarshipByCrewUid', error);
       throw error;
     }
   },

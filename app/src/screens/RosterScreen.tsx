@@ -15,18 +15,20 @@ import { AuthStackParamList } from '../App';
 import {
   FileText,
   Award,
-  RotateCcw,
   UserX,
   PlusCircle,
   Circle,
+  QrCode,
 } from 'lucide-react-native';
 import SciFiBackground from '../components/SciFiBackground';
+import RegistrationCodeModal from '../components/RegistrationCodeModal';
 import Colors from '../theme/colors';
 import { useCrew, starshipService, type Crew } from '../data';
 import { getAuth } from '@react-native-firebase/auth';
 
 interface CrewCardProps {
   member: Crew & { id: string };
+  onViewToken: (member: Crew & { id: string }) => void;
 }
 
 const formatRelativeTime = (epoch: number) => {
@@ -41,7 +43,7 @@ const formatRelativeTime = (epoch: number) => {
   return `${diffDays}D AGO`;
 };
 
-const CrewCard = ({ member }: CrewCardProps) => {
+const CrewCard = ({ member, onViewToken }: CrewCardProps) => {
   const statusColor =
     member.role === 'captain' ? Colors.neonOrange : Colors.cyan;
   const displayStatus = member.status || 'pending';
@@ -96,9 +98,12 @@ const CrewCard = ({ member }: CrewCardProps) => {
           <Award size={14} color={Colors.grey} />
           <Text style={styles.actionButtonText}>EDIT LEVEL/POINTS</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <RotateCcw size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>VIEW INVITE CODE</Text>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => onViewToken(member)}
+        >
+          <QrCode size={14} color={Colors.grey} />
+          <Text style={styles.actionButtonText}>VIEW REGISTRATION TOKEN</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <UserX size={14} color={Colors.grey} />
@@ -121,15 +126,28 @@ interface Props {
 const RosterScreen: React.FC<Props> = ({ navigation }) => {
   const [starshipId, setStarshipId] = useState<string | null>(null);
   const { crew, loading, error } = useCrew(starshipId);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<
+    (Crew & { id: string }) | null
+  >(null);
 
   useEffect(() => {
     const discoverStarship = async () => {
       const currentUser = getAuth().currentUser;
       if (currentUser) {
         try {
-          const starship = await starshipService.getStarshipByCaptainId(
+          // Try captain lookup first
+          let starship = await starshipService.getStarshipByCaptainId(
             currentUser.uid,
           );
+
+          // If not a captain, try crew lookup
+          if (!starship) {
+            starship = await starshipService.getStarshipByCrewUid(
+              currentUser.uid,
+            );
+          }
+
           setStarshipId(starship?.starshipId || currentUser.uid);
         } catch (err) {
           console.error('Error discovering starship:', err);
@@ -139,6 +157,11 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
     };
     discoverStarship();
   }, []);
+
+  const handleViewToken = (member: Crew & { id: string }) => {
+    setSelectedMember(member);
+    setModalVisible(true);
+  };
 
   return (
     <SciFiBackground>
@@ -177,11 +200,27 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.emptyText}>NO FAMILY MEMBERS FOUND</Text>
             </View>
           ) : (
-            crew.map(member => <CrewCard key={member.id} member={member} />)
+            crew.map(member => (
+              <CrewCard
+                key={member.id}
+                member={member}
+                onViewToken={handleViewToken}
+              />
+            ))
           )}
 
           <View style={{ height: 120 }} />
         </ScrollView>
+
+        {/* Registration Modal */}
+        {selectedMember && starshipId && (
+          <RegistrationCodeModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            starshipId={starshipId}
+            crewId={selectedMember.id}
+          />
+        )}
 
         {/* Footer Action */}
         <View style={styles.footer}>

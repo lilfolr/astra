@@ -25,12 +25,16 @@
     "@react-navigation/native": "^7.1.31",
     "@react-navigation/stack": "^7.8.2",
     "lucide-react-native": "^0.575.0",
-    "react": "19.2.4",
+    "react": "19.2.3",
     "react-native": "0.84.0",
+    "react-native-barcode-mask": "^1.2.4",
     "react-native-gesture-handler": "^2.30.0",
     "react-native-safe-area-context": "^5.7.0",
+    "react-native-qrcode-svg": "^6.3.21",
     "react-native-screens": "^4.24.0",
     "react-native-svg": "^15.15.3",
+    "react-native-vision-camera": "^4.7.3",
+    "react-native-worklets-core": "^1.6.3",
     "valibot": "^1.2.0"
   },
   "devDependencies": {
@@ -51,7 +55,7 @@
     "eslint": "^8.19.0",
     "jest": "^30.2.0",
     "prettier": "3.8.1",
-    "react-test-renderer": "19.2.4",
+    "react-test-renderer": "19.2.3",
     "ts-jest": "^29.4.6",
     "typescript": "^5.8.3"
   },
