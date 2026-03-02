@@ -19,7 +19,8 @@ import RosterScreen from './screens/RosterScreen';
 import RecruitScreen from './screens/RecruitScreen';
 import ModuleFormScreen from './screens/ModuleFormScreen';
 import MissionsScreen from './screens/MissionsScreen';
-import { Module } from './data/models/schemas';
+import MissionFormScreen from './screens/MissionFormScreen';
+import { Module, Mission } from './data/models/schemas';
 
 export type AuthStackParamList = {
   Welcome: undefined;
@@ -31,6 +32,7 @@ export type AuthStackParamList = {
   Roster: undefined;
   Recruit: undefined;
   ModuleForm: { starshipId: string; module?: Module & { id: string } };
+  MissionForm: { starshipId: string; mission?: Mission & { id: string } };
   Missions: undefined;
 };
 
@@ -66,6 +68,7 @@ function App() {
               <Stack.Screen name="Roster" component={RosterScreen} />
               <Stack.Screen name="Recruit" component={RecruitScreen} />
               <Stack.Screen name="ModuleForm" component={ModuleFormScreen} />
+              <Stack.Screen name="MissionForm" component={MissionFormScreen} />
               <Stack.Screen
                 name="CreateProfile"
                 component={CreateProfileScreen}

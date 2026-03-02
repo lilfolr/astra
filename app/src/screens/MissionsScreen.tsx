@@ -22,6 +22,8 @@ import {
   MapPin,
   ChevronRight,
   ShieldCheck,
+  Plus,
+  Edit2,
 } from 'lucide-react-native';
 import SciFiBackground from '../components/SciFiBackground';
 import Colors from '../theme/colors';
@@ -180,7 +182,21 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
-        <Text style={styles.missionTitle}>{mission.title}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.missionTitle}>{mission.title}</Text>
+          {isCaptain && (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('MissionForm', {
+                  starshipId: starshipId!,
+                  mission,
+                })
+              }
+            >
+              <Edit2 size={16} color={Colors.cyan} style={{ opacity: 0.6 }} />
+            </TouchableOpacity>
+          )}
+        </View>
         <Text style={styles.missionDescription} numberOfLines={2}>
           {mission.description}
         </Text>
@@ -335,6 +351,17 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
+          {isCaptain && (
+            <TouchableOpacity
+              style={styles.addChoreButton}
+              onPress={() =>
+                navigation.navigate('MissionForm', { starshipId: starshipId! })
+              }
+            >
+              <Plus size={20} color={Colors.cyan} />
+              <Text style={styles.addChoreButtonText}>ADD NEW CHORE</Text>
+            </TouchableOpacity>
+          )}
           {loading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
@@ -474,12 +501,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   missionTitle: {
     color: Colors.white,
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4,
     letterSpacing: 0.5,
+    flex: 1,
   },
   missionDescription: {
     color: 'rgba(255, 255, 255, 0.6)',
@@ -594,6 +627,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     letterSpacing: 1,
+  },
+  addChoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(0, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(0, 255, 255, 0.3)',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+  },
+  addChoreButtonText: {
+    color: Colors.cyan,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 2,
   },
   footerSpacing: {
     height: 100,

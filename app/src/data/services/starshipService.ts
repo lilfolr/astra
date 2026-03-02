@@ -162,6 +162,29 @@ export const starshipService = {
   },
 
   /**
+   * Deletes an existing mission.
+   */
+  async deleteMission(starshipId: string, missionId: string) {
+    dataLogger.logRequest('deleteMission', { starshipId, missionId });
+    try {
+      await deleteDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/missions/${missionId}`,
+        ),
+      );
+      dataLogger.logResponse('deleteMission', {
+        starshipId,
+        missionId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('deleteMission', error);
+      throw error;
+    }
+  },
+
+  /**
    * Adds a new module to a starship.
    */
   async addModule(starshipId: string, module: Module) {
