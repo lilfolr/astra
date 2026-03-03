@@ -71,6 +71,18 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           }
 
           setStarshipId(sid);
+
+          // 5. Check if profile (crew member) exists
+          if (sid) {
+            const crewMember = await starshipService.getCrewMemberByUid(
+              sid,
+              currentUser.uid,
+            );
+            if (!crewMember) {
+              // No profile found, redirect to creation
+              navigation.replace('CreateProfile');
+            }
+          }
         } catch (err) {
           console.error('Error discovering starship:', err);
           // Fallback to UID as starshipId in case of error
@@ -79,7 +91,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
       }
     };
     discoverStarship();
-  }, []);
+  }, [navigation]);
 
   useEffect(() => {
     const pulse = Animated.loop(

@@ -35,6 +35,27 @@ import {
  */
 export const starshipService = {
   /**
+   * Creates a new starship.
+   */
+  async createStarship(starshipId: string, data: Starship) {
+    dataLogger.logRequest('createStarship', { starshipId, data });
+    try {
+      const validated = v.parse(StarshipSchema, data);
+      await setDoc(
+        doc(getFirestore(), `api/v1/starships/${starshipId}`),
+        validated,
+      );
+      dataLogger.logResponse('createStarship', {
+        starshipId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('createStarship', error);
+      throw error;
+    }
+  },
+
+  /**
    * Updates an existing starship.
    */
   async updateStarship(starshipId: string, data: Partial<Starship>) {
@@ -200,6 +221,27 @@ export const starshipService = {
   },
 
   /**
+   * Deletes a crew member from a starship.
+   */
+  async deleteCrewMember(starshipId: string, crewId: string) {
+    dataLogger.logRequest('deleteCrewMember', { starshipId, crewId });
+    try {
+      // FIXME: We should restrict the deletion of captains from the crew
+      await deleteDoc(
+        doc(getFirestore(), `api/v1/starships/${starshipId}/crew/${crewId}`),
+      );
+      dataLogger.logResponse('deleteCrewMember', {
+        starshipId,
+        crewId,
+        status: 'success',
+      });
+    } catch (error) {
+      dataLogger.logError('deleteCrewMember', error);
+      throw error;
+    }
+  },
+
+  /**
    * Updates an existing crew member's data.
    */
   async updateCrewMember(
@@ -223,6 +265,39 @@ export const starshipService = {
       });
     } catch (error) {
       dataLogger.logError('updateCrewMember', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Finds a crew member by their UID within a specific starship.
+   */
+  async getCrewMemberByUid(
+    starshipId: string,
+    uid: string,
+  ): Promise<(Crew & { id: string }) | null> {
+    dataLogger.logRequest('getCrewMemberByUid', { starshipId, uid });
+    try {
+      const q = query(
+        collection(getFirestore(), `api/v1/starships/${starshipId}/crew`),
+        where('uid', '==', uid),
+        limit(1),
+      );
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        dataLogger.logResponse('getCrewMemberByUid', null);
+        return null;
+      }
+
+      const crewDoc = snapshot.docs[0];
+      const data = crewDoc.data();
+      const validated = v.parse(CrewSchema, data);
+      const result = { ...validated, id: crewDoc.id };
+      dataLogger.logResponse('getCrewMemberByUid', result);
+      return result;
+    } catch (error) {
+      dataLogger.logError('getCrewMemberByUid', error);
       throw error;
     }
   },
