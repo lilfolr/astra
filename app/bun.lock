@@ -11,7 +11,7 @@
         "@react-native/new-app-screen": "0.84.1",
         "@react-navigation/native": "^7.1.31",
         "@react-navigation/stack": "^7.8.2",
-        "lucide-react-native": "^0.575.0",
+        "lucide-react-native": "^0.576.0",
         "react": "19.2.4",
         "react-native": "0.84.1",
         "react-native-barcode-mask": "^1.2.4",
@@ -1368,7 +1368,7 @@
 
     "lru-cache": ["lru-cache@5.1.1", "", { "dependencies": { "yallist": "^3.0.2" } }, "sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w=="],
 
-    "lucide-react-native": ["lucide-react-native@0.575.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-native": "*", "react-native-svg": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0" } }, "sha512-kdGcjF4Rm1YKuNs3IaW5lDAqVKn9RBj1Fmjt3JBr08PMIXpVV7iL0ICNF/awiPZQicHlx/v9xgyZZS4TAFxDNg=="],
+    "lucide-react-native": ["lucide-react-native@0.576.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-native": "*", "react-native-svg": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0" } }, "sha512-z38PwB7Rknhs1FrT1oMTp1MThnXpv//UH0usmhHAL8DrMoaBtKOKtRvdJOUleHmQZXMX8NcjgzOkelhCilUIlQ=="],
 
     "make-dir": ["make-dir@4.0.0", "", { "dependencies": { "semver": "^7.5.3" } }, "sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw=="],
 
