@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   StyleSheet,
   View,
@@ -24,6 +24,8 @@ import {
   ShieldCheck,
   Plus,
   Edit2,
+  Square,
+  CheckSquare,
 } from 'lucide-react-native';
 import SciFiBackground from '../components/SciFiBackground';
 import Colors from '../theme/colors';
@@ -31,7 +33,6 @@ import {
   useMissions,
   useModules,
   useCrew,
-  useDiscoverStarship,
   starshipService,
   type Mission,
 } from '../data';
@@ -50,13 +51,8 @@ type TabType = 'my' | 'all' | 'available';
 
 const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   const [activeTab, setActiveTab] = useState<TabType>('my');
+  const [starshipId, setStarshipId] = useState<string | null>(null);
   const currentUser = getAuth().currentUser;
-
-  const {
-    starshipId,
-    loading: discovering,
-    error: discoverError,
-  } = useDiscoverStarship();
 
   const {
     missions,
@@ -64,17 +60,30 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
     error: missionsError,
   } = useMissions(starshipId);
   const { modules, loading: modulesLoading } = useModules(starshipId);
-  const { crew, loading: crewLoading } = useCrew(starshipId);
-
-  const loading =
-    discovering || missionsLoading || modulesLoading || crewLoading;
-  const error = discoverError || missionsError;
+  const { crew } = useCrew(starshipId);
 
   const myCrewMember = useMemo(() => {
     return crew.find(c => c.uid === currentUser?.uid);
   }, [crew, currentUser]);
 
   const isCaptain = myCrewMember?.role === 'captain';
+
+  useEffect(() => {
+    const discoverStarship = async () => {
+      if (currentUser) {
+        try {
+          const starship = await starshipService.getStarshipByCaptainId(
+            currentUser.uid,
+          );
+          setStarshipId(starship?.starshipId || currentUser.uid);
+        } catch (err) {
+          console.error('Error discovering starship:', err);
+          setStarshipId(currentUser.uid);
+        }
+      }
+    };
+    discoverStarship();
+  }, [currentUser]);
 
   const filteredMissions = useMemo(() => {
     if (!missions) return [];
@@ -104,6 +113,26 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
       });
     } catch {
       Alert.alert('Error', 'Failed to assign mission');
+    }
+  };
+
+  const handleToggleTask = async (
+    missionId: string,
+    tasks: Mission['tasks'],
+    taskId: string,
+  ) => {
+    if (!starshipId || !tasks) return;
+
+    const updatedTasks = tasks.map(t =>
+      t.id === taskId ? { ...t, completed: !t.completed } : t,
+    );
+
+    try {
+      await starshipService.updateMission(starshipId, missionId, {
+        tasks: updatedTasks,
+      });
+    } catch {
+      Alert.alert('Error', 'Failed to update task');
     }
   };
 
@@ -200,6 +229,38 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.missionDescription} numberOfLines={2}>
           {mission.description}
         </Text>
+
+        {mission.tasks && mission.tasks.length > 0 && (
+          <View style={styles.checklistContainer}>
+            {mission.tasks.map(task => {
+              const canToggle = mission.assignedTo === currentUser?.uid;
+              return (
+                <TouchableOpacity
+                  key={task.id}
+                  style={styles.checklistItem}
+                  disabled={!canToggle}
+                  onPress={() =>
+                    handleToggleTask(mission.id, mission.tasks, task.id)
+                  }
+                >
+                  {task.completed ? (
+                    <CheckSquare size={14} color={Colors.cyan} />
+                  ) : (
+                    <Square size={14} color={Colors.cyan} opacity={0.5} />
+                  )}
+                  <Text
+                    style={[
+                      styles.checklistText,
+                      task.completed && styles.checklistTextCompleted,
+                    ]}
+                  >
+                    {task.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
 
         <View style={styles.locationContainer}>
           <MapPin size={12} color={Colors.cyan} opacity={0.7} />
@@ -362,14 +423,17 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.addChoreButtonText}>ADD NEW CHORE</Text>
             </TouchableOpacity>
           )}
-          {loading ? (
+
+          {missionsLoading || modulesLoading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
               <Text style={styles.loadingText}>ACCESSING CHORE DATA...</Text>
             </View>
-          ) : error ? (
+          ) : missionsError ? (
             <View style={styles.centered}>
-              <Text style={styles.errorText}>UPLINK ERROR: {error}</Text>
+              <Text style={styles.errorText}>
+                UPLINK ERROR: {missionsError}
+              </Text>
             </View>
           ) : filteredMissions.length === 0 ? (
             <View style={styles.centered}>
@@ -519,6 +583,25 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 12,
+  },
+  checklistContainer: {
+    marginBottom: 16,
+    paddingLeft: 4,
+    gap: 8,
+  },
+  checklistItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  checklistText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  checklistTextCompleted: {
+    color: 'rgba(255, 255, 255, 0.3)',
+    textDecorationLine: 'line-through',
   },
   locationContainer: {
     flexDirection: 'row',

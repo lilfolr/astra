@@ -17,7 +17,7 @@ import SciFiBackground from '../components/SciFiBackground';
 import SciFiButton from '../components/SciFiButton';
 import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
-import { ArrowLeft, Trash2, ClipboardList } from 'lucide-react-native';
+import { ArrowLeft, Trash2, ClipboardList, Plus, X } from 'lucide-react-native';
 import { starshipService, useModules, type Mission } from '../data';
 import * as v from 'valibot';
 import { MissionSchema } from '../data/models/schemas';
@@ -56,7 +56,24 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
     existingMission?.creditReward?.toString() || '100',
   );
   const [moduleId, setModuleId] = useState(existingMission?.moduleId || '');
+  const [tasks, setTasks] = useState(existingMission?.tasks || []);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleAddTask = () => {
+    if (!newTaskTitle.trim()) return;
+    const newTask = {
+      id: Math.random().toString(36).substring(2, 9),
+      title: newTaskTitle.trim(),
+      completed: false,
+    };
+    setTasks([...tasks, newTask]);
+    setNewTaskTitle('');
+  };
+
+  const handleRemoveTask = (taskId: string) => {
+    setTasks(tasks.filter(t => t.id !== taskId));
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -69,6 +86,7 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
         moduleId: moduleId || undefined,
         assignedTo: existingMission?.assignedTo || '',
         status: existingMission?.status || 'pending',
+        tasks: tasks,
       };
 
       // Validate
@@ -176,6 +194,40 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               multiline
               numberOfLines={3}
             />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionLine} />
+              <Text style={styles.sectionTitle}>CHECKLIST TASKS</Text>
+              <View style={styles.sectionLine} />
+            </View>
+
+            {tasks.map(task => (
+              <View key={task.id} style={styles.taskItem}>
+                <Text style={styles.taskText}>{task.title}</Text>
+                <TouchableOpacity onPress={() => handleRemoveTask(task.id)}>
+                  <X size={16} color={Colors.neonOrange} />
+                </TouchableOpacity>
+              </View>
+            ))}
+
+            <View style={styles.addTaskContainer}>
+              <View style={{ flex: 1 }}>
+                <SciFiInput
+                  label=""
+                  value={newTaskTitle}
+                  onChangeText={setNewTaskTitle}
+                  placeholder="ADD_SUB_TASK..."
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.addTaskButton}
+                onPress={handleAddTask}
+              >
+                <Plus size={20} color={Colors.deepObsidian} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.section}>
@@ -395,6 +447,37 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.3)',
     fontSize: 10,
     fontStyle: 'italic',
+  },
+  taskItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(0, 255, 255, 0.05)',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 255, 0.1)',
+  },
+  taskText: {
+    color: Colors.white,
+    fontSize: 12,
+    flex: 1,
+  },
+  addTaskContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  addTaskButton: {
+    backgroundColor: Colors.cyan,
+    width: 44,
+    height: 44,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4, // Align with input
   },
   deleteButton: {
     flexDirection: 'row',
