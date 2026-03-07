@@ -38,6 +38,11 @@
     "react-native-worklets-core": "^1.6.3",
     "valibot": "^1.2.0"
   },
+  "overrides": {
+    "react": "19.2.3",
+    "react-is": "19.2.3",
+    "react-test-renderer": "19.2.3"
+  },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.28.6",
