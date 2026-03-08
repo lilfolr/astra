@@ -45,6 +45,15 @@ export function useDiscoverStarship() {
             }
           }
 
+          if (sid) {
+            // Ensure captain/user has a crew record
+            await starshipService.ensureCaptainCrewRecord(
+              sid,
+              currentUser.uid,
+              currentUser.email?.split('@')[0] || 'Captain',
+            );
+          }
+
           if (isMounted) {
             setStarshipId(sid);
             setError(null);

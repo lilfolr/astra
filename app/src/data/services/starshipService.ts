@@ -62,6 +62,69 @@ export const starshipService = {
   },
 
   /**
+   * Verifies a mission, marking it as completed and awarding credits/XP.
+   */
+  async verifyMission(starshipId: string, missionId: string) {
+    dataLogger.logRequest('verifyMission', { starshipId, missionId });
+    try {
+      const db = getFirestore();
+      const missionRef = doc(
+        db,
+        `api/v1/starships/${starshipId}/missions/${missionId}`,
+      );
+      const missionSnap = await getDoc(missionRef);
+
+      const exists =
+        typeof missionSnap.exists === 'function'
+          ? missionSnap.exists()
+          : missionSnap.exists;
+      if (!exists) throw new Error('Mission not found');
+
+      const missionData = missionSnap.data() as Mission;
+      if (missionData.status === 'completed') {
+        return; // Already verified
+      }
+
+      const assignedToUid = missionData.assignedTo;
+      if (!assignedToUid) {
+        // Just mark as completed if no one is assigned
+        await updateDoc(missionRef, { status: 'completed' });
+        return;
+      }
+
+      // Find the crew member record for the assigned user
+      const crewQuery = query(
+        collection(db, `api/v1/starships/${starshipId}/crew`),
+        where('uid', '==', assignedToUid),
+        limit(1),
+      );
+      const crewSnap = await getDocs(crewQuery);
+
+      if (!crewSnap.empty) {
+        const crewDoc = crewSnap.docs[0];
+        const crewData = crewDoc.data() as Crew;
+
+        const reward = missionData.creditReward || 0;
+
+        // Award credits and XP
+        await updateDoc(crewDoc.ref, {
+          credits: (crewData.credits || 0) + reward,
+          xp: (crewData.xp || 0) + reward,
+          lastSeen: Date.now(),
+        });
+      }
+
+      // Mark mission as completed
+      await updateDoc(missionRef, { status: 'completed' });
+
+      dataLogger.logResponse('verifyMission', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('verifyMission', error);
+      throw error;
+    }
+  },
+
+  /**
    * Deletes an existing module.
    */
   async deleteModule(starshipId: string, moduleId: string) {
@@ -610,6 +673,54 @@ export const starshipService = {
       dataLogger.logResponse('fulfillPurchase', { status: 'success' });
     } catch (error) {
       dataLogger.logError('fulfillPurchase', error);
+      throw error;
+    }
+  },
+  /**
+   * Ensures the captain has a crew record in the starship's crew collection.
+   */
+  async ensureCaptainCrewRecord(
+    starshipId: string,
+    captainUid: string,
+    captainName: string,
+  ) {
+    dataLogger.logRequest('ensureCaptainCrewRecord', {
+      starshipId,
+      captainUid,
+    });
+    try {
+      const db = getFirestore();
+      const crewQuery = query(
+        collection(db, `api/v1/starships/${starshipId}/crew`),
+        where('uid', '==', captainUid),
+        limit(1),
+      );
+      const crewSnap = await getDocs(crewQuery);
+
+      if (crewSnap.empty) {
+        const newCrew: Crew = {
+          uid: captainUid,
+          name: captainName,
+          role: 'captain',
+          credits: 0,
+          xp: 0,
+          level: 1,
+          createdDate: Date.now(),
+          status: 'stable',
+          lastSeen: Date.now(),
+          registrationCode: '',
+          registrationCodeExpiry: 0,
+          disabled: false,
+        };
+        await this.addCrewMember(starshipId, newCrew);
+        dataLogger.logResponse('ensureCaptainCrewRecord', {
+          status: 'created',
+        });
+      } else {
+        dataLogger.logResponse('ensureCaptainCrewRecord', { status: 'exists' });
+      }
+    } catch (error) {
+      dataLogger.logError('ensureCaptainCrewRecord', error);
       throw error;
     }
   },
