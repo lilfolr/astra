@@ -1,48 +1,49 @@
-# Project Plan: Starship Home (v1.0)
+# Project Plan: Astra (v1.0)
 
-## Phase 1: Foundation & Ship Specs (Weeks 1-2)
+## Phase 1: Foundation & Ship Specs (Completed)
 **Goal:** Finalize the game logic and technical environment.
 
-- **Database Schema:** Design the JSON tree for Starship IDs, Crew Roles, and Module status.
-- **Narrative Design:** Write the "Ship AI" dialogue library (Red Alerts, Success messages, Onboarding).
-- **Legal/Safety:** Draft basic terms of service regarding data privacy (especially for minors).
-- **Tech Spike:** Set up React Native + Firebase environment and test real-time state syncing across two devices.
+- [x] **Database Schema:** Designed Firestore hierarchy for Starships, Crew, Rooms, and Chores.
+- [x] **Tech Spike:** Set up React Native + Firebase environment with real-time state syncing.
+- [x] **Auth & Profile:** Implemented Firebase Auth with "Captain" and "Crew" role initialization.
 
-## Phase 2: Core Systems Development (Weeks 3-6)
+## Phase 2: Core Systems Development (Completed)
 **Goal:** Build the functional "Chore Engine."
 
-- **Module Mapping:** Create the UI for parents to "scan" their home and map rooms to Ship Modules.
-- **Task Logic:** Build the CRUD (Create, Read, Update, Delete) system for "Missions."
-- **The Shared Health Bar:** Implement the "Hull Integrity" calculation logic (Total Tasks Completed / Total Tasks Assigned).
-- **Auth & Family Linking:** Develop the "Captain's Invite" system to link Crew members via QR code.
+- [x] **Room Mapping:** Created UI for parents to map home rooms to ship modules.
+- [x] **Chore Logic:** Built the CRUD system for "Chores" (Missions) with a multi-stage lifecycle (Pending -> Active -> Under Review -> Completed).
+- [x] **Family Linking:** Developed the "Captain's Invite" system via QR codes and registration codes.
+- [x] **Real-time Sync:** Implemented Firestore hooks to update the Dashboard and Chore lists instantly across devices.
 
-## Phase 3: The "Game" Layer (Weeks 7-10)
+## Phase 3: The "Game" Layer (In Progress)
 **Goal:** Add the "Juice" that makes it feel like a spaceship.
 
-- **The Command Deck:** Build the interactive 2D ship map using `react-native-game-engine`.
-- **Credit/XP System:** Implement the "Hangar" (Reward Shop) and currency tracking.
-- **Visual FX:** Add haptic feedback, neon UI animations, and "Red Alert" screen overlays.
-- **AI Integration:** Set up automated notifications for "Hull Breaches" (overdue tasks).
+- [x] **The Command Deck:** Built the "Neon Industrial" dashboard with real-time status updates and a scrolling ticker.
+- [x] **Credit/XP System:** Implemented XP and Credit (CR) tracking for crew members.
+- [ ] **The Shop (Hangar):** Build the reward redemption system for parent-defined manual rewards. (Pending)
+- [ ] **Visual FX & Sound:** Add more animations and haptic feedback to "Chore Done" and "Verification" events.
+- [ ] **AI Notifications:** Set up automated "Ship AI" notifications for overdue chores or "Hull Breaches."
 
-## Phase 4: Beta Testing (Weeks 11-12)
+## Phase 4: Beta Testing (Planned)
 **Goal:** Polish based on real family feedback.
 
-- **Closed Beta:** Invite 10-20 "Alpha Families" to use the app for 14 days.
-- **Feedback Loop:** Focus on "Friction Points"—is the game becoming a chore itself?
-- **Bug Squashing:** Fix sync issues and notification lag.
+- [ ] **Closed Beta:** Invite 10-20 families to use the app for 14 days.
+- [ ] **Feedback Loop:** Identify friction points in the chore lifecycle and verification process.
+- [ ] **Bug Squashing:** Address sync edge cases and UI/UX inconsistencies.
 
-## Phase 5: Launch & Expansion (Week 13+)
-**Goal:** Go live and start the revenue engine.
+## Phase 5: Launch & Expansion (Future)
+**Goal:** Go live and expand.
 
-- **App Store Launch:** Deploy to iOS and Android.
-- **Monetization V1:** Integrate Stripe for "Pro" subscriptions.
-- **Partnerships:** Reach out to house-cleaning or maintenance services for the "Repair Droid" affiliate program.
+- [ ] **App Store Launch:** Deploy to iOS and Android.
+- [ ] **Subscription Model:** Integrate Stripe/IAP for "Fleet" management features.
+- [ ] **Integrations:** Explore API integrations for smart home systems (e.g., pausing Wi-Fi if status is critical).
 
 ---
 
 ## Minimum Viable Product (MVP) Scope
-To launch by Week 13, the MVP will include:
-- **Shared Hull Integrity Bar:** The "All for one" motivator.
-- **Basic Room Mapping:** Max 5 modules.
-- **Real-time Task Completion:** Instant XP gain.
-- **The Reward Shop:** Parent-defined manual rewards.
+The MVP currently includes:
+- **Real-time Family Status:** A visual indicator of home "health" based on chores.
+- **Room & Chore Management:** Full CRUD for rooms and tasks.
+- **Role-based Access:** Captains manage the ship; Crew members complete tasks.
+- **Gamified Stats:** Leveling system with XP and Credits.
+- **QR Code Onboarding:** Seamlessly join a family starship.
