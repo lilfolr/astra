@@ -23,11 +23,15 @@ import {
   ModuleSchema,
   CrewSchema,
   UserStarshipSchema,
+  ShopItemSchema,
+  PurchaseSchema,
   type Starship,
   type Mission,
   type Module,
   type Crew,
   type UserStarship,
+  type ShopItem,
+  type Purchase,
 } from '../models';
 
 /**
@@ -466,6 +470,146 @@ export const starshipService = {
       return data.starshipId;
     } catch (error) {
       dataLogger.logError('getStarshipIdForUser', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Adds a new shop item.
+   */
+  async addShopItem(starshipId: string, item: ShopItem) {
+    dataLogger.logRequest('addShopItem', { starshipId, item });
+    try {
+      const validated = v.parse(ShopItemSchema, item);
+      const result = await addDoc(
+        collection(getFirestore(), `api/v1/starships/${starshipId}/shopItems`),
+        validated,
+      );
+      dataLogger.logResponse('addShopItem', { id: result.id });
+      return result;
+    } catch (error) {
+      dataLogger.logError('addShopItem', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Updates an existing shop item.
+   */
+  async updateShopItem(
+    starshipId: string,
+    itemId: string,
+    data: Partial<ShopItem>,
+  ) {
+    dataLogger.logRequest('updateShopItem', { starshipId, itemId, data });
+    try {
+      const PartialShopItemSchema = v.partial(ShopItemSchema);
+      const validated = v.parse(PartialShopItemSchema, data);
+
+      await updateDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/shopItems/${itemId}`,
+        ),
+        validated,
+      );
+      dataLogger.logResponse('updateShopItem', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('updateShopItem', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletes a shop item.
+   */
+  async deleteShopItem(starshipId: string, itemId: string) {
+    dataLogger.logRequest('deleteShopItem', { starshipId, itemId });
+    try {
+      await deleteDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/shopItems/${itemId}`,
+        ),
+      );
+      dataLogger.logResponse('deleteShopItem', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('deleteShopItem', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Records a purchase and deducts credits from the user.
+   */
+  async purchaseItem(
+    starshipId: string,
+    crewId: string,
+    item: ShopItem & { id: string },
+  ) {
+    dataLogger.logRequest('purchaseItem', { starshipId, crewId, item });
+    try {
+      const db = getFirestore();
+      const crewRef = doc(db, `api/v1/starships/${starshipId}/crew/${crewId}`);
+      const crewSnap = await getDoc(crewRef);
+
+      if (!crewSnap.exists) throw new Error('Crew member not found');
+      const crewData = crewSnap.data() as Crew;
+
+      if (crewData.credits < item.price) {
+        throw new Error('Insufficient credits');
+      }
+
+      // 1. Deduct credits
+      await updateDoc(crewRef, {
+        credits: crewData.credits - item.price,
+      });
+
+      // 2. Record purchase
+      const purchaseData: Purchase = {
+        purchaserId: crewData.uid || '',
+        itemId: item.id,
+        itemName: item.name,
+        price: item.price,
+        status: 'pending',
+        createdAt: Date.now(),
+      };
+
+      const validated = v.parse(PurchaseSchema, purchaseData);
+      const result = await addDoc(
+        collection(db, `api/v1/starships/${starshipId}/purchases`),
+        validated,
+      );
+
+      // TODO: Notify parent of new purchase
+
+      dataLogger.logResponse('purchaseItem', { id: result.id });
+      return result;
+    } catch (error) {
+      dataLogger.logError('purchaseItem', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Marks a purchase as fulfilled.
+   */
+  async fulfillPurchase(starshipId: string, purchaseId: string) {
+    dataLogger.logRequest('fulfillPurchase', { starshipId, purchaseId });
+    try {
+      await updateDoc(
+        doc(
+          getFirestore(),
+          `api/v1/starships/${starshipId}/purchases/${purchaseId}`,
+        ),
+        {
+          status: 'fulfilled',
+          fulfilledAt: Date.now(),
+        },
+      );
+      dataLogger.logResponse('fulfillPurchase', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('fulfillPurchase', error);
       throw error;
     }
   },

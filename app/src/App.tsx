@@ -20,7 +20,9 @@ import RecruitScreen from './screens/RecruitScreen';
 import ModuleFormScreen from './screens/ModuleFormScreen';
 import MissionsScreen from './screens/MissionsScreen';
 import MissionFormScreen from './screens/MissionFormScreen';
-import { Module, Mission } from './data/models/schemas';
+import ShopScreen from './screens/ShopScreen';
+import ShopItemFormScreen from './screens/ShopItemFormScreen';
+import { Module, Mission, ShopItem } from './data/models/schemas';
 
 export type AuthStackParamList = {
   Welcome: undefined;
@@ -34,6 +36,8 @@ export type AuthStackParamList = {
   ModuleForm: { starshipId: string; module?: Module & { id: string } };
   MissionForm: { starshipId: string; mission?: Mission & { id: string } };
   Missions: undefined;
+  Shop: undefined;
+  ShopItemForm: { starshipId: string; item?: ShopItem & { id: string } };
 };
 
 const Stack = createStackNavigator<AuthStackParamList>();
@@ -69,6 +73,11 @@ function App() {
               <Stack.Screen name="Recruit" component={RecruitScreen} />
               <Stack.Screen name="ModuleForm" component={ModuleFormScreen} />
               <Stack.Screen name="MissionForm" component={MissionFormScreen} />
+              <Stack.Screen name="Shop" component={ShopScreen} />
+              <Stack.Screen
+                name="ShopItemForm"
+                component={ShopItemFormScreen}
+              />
               <Stack.Screen
                 name="CreateProfile"
                 component={CreateProfileScreen}
