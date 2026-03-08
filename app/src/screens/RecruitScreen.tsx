@@ -67,6 +67,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
         registrationCodeExpiry,
         status: 'pending',
         lastSeen: Date.now(),
+        disabled: false,
       };
 
       await starshipService.addCrewMember(starshipId, newCrew);

@@ -16,6 +16,7 @@ import {
   FileText,
   Award,
   UserX,
+  UserCheck,
   PlusCircle,
   Circle,
   QrCode,
@@ -23,10 +24,17 @@ import {
 import SciFiBackground from '../components/SciFiBackground';
 import RegistrationCodeModal from '../components/RegistrationCodeModal';
 import Colors from '../theme/colors';
-import { useCrew, useDiscoverStarship, type Crew } from '../data';
+import {
+  useCrew,
+  useDiscoverStarship,
+  starshipService,
+  type Crew,
+} from '../data';
+import { getAuth } from '@react-native-firebase/auth';
 
 interface CrewCardProps {
   member: Crew & { id: string };
+  starshipId: string;
   onViewToken: (member: Crew & { id: string }) => void;
 }
 
@@ -42,18 +50,50 @@ const formatRelativeTime = (epoch: number) => {
   return `${diffDays}D AGO`;
 };
 
-const CrewCard = ({ member, onViewToken }: CrewCardProps) => {
-  const statusColor =
-    member.role === 'captain' ? Colors.neonOrange : Colors.cyan;
+const CrewCard = ({ member, starshipId, onViewToken }: CrewCardProps) => {
+  const [processing, setProcessing] = useState(false);
+  const currentUserId = getAuth().currentUser?.uid;
+  const isSelf = member.uid === currentUserId;
+  const isDisabled = member.disabled === true;
+
+  const statusColor = isDisabled
+    ? Colors.grey
+    : member.role === 'captain'
+      ? Colors.neonOrange
+      : Colors.cyan;
   const displayStatus = member.status || 'pending';
   const displayLastSeen = formatRelativeTime(member.lastSeen);
 
+  const handleToggleDisabled = async () => {
+    if (processing || isSelf) return;
+
+    try {
+      setProcessing(true);
+      await starshipService.setCrewMemberDisabled(
+        starshipId,
+        member.id,
+        member.uid,
+        !isDisabled,
+      );
+    } catch (error) {
+      console.error('Error toggling disabled status:', error);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   return (
-    <View style={[styles.card, { borderLeftColor: statusColor }]}>
+    <View
+      style={[
+        styles.card,
+        { borderLeftColor: statusColor },
+        isDisabled && styles.disabledCard,
+      ]}
+    >
       <View style={styles.cardHeader}>
         <View style={styles.statusContainer}>
           <Text style={[styles.statusText, { color: statusColor }]}>
-            LAST SEEN: {displayLastSeen}
+            {isDisabled ? 'DISABLED' : `LAST SEEN: ${displayLastSeen}`}
           </Text>
           <Circle size={8} fill={statusColor} color={statusColor} />
         </View>
@@ -104,9 +144,30 @@ const CrewCard = ({ member, onViewToken }: CrewCardProps) => {
           <QrCode size={14} color={Colors.grey} />
           <Text style={styles.actionButtonText}>VIEW REGISTRATION TOKEN</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <UserX size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>DISABLE</Text>
+        <TouchableOpacity
+          style={[
+            styles.actionButton,
+            (isSelf || processing) && styles.disabledActionButton,
+          ]}
+          onPress={handleToggleDisabled}
+          disabled={isSelf || processing}
+        >
+          {processing ? (
+            <ActivityIndicator size={12} color={Colors.grey} />
+          ) : isDisabled ? (
+            <UserCheck size={14} color={Colors.cyan} />
+          ) : (
+            <UserX size={14} color={Colors.neonOrange} />
+          )}
+          <Text
+            style={[
+              styles.actionButtonText,
+              isDisabled && !processing && { color: Colors.cyan },
+              !isDisabled && !processing && { color: Colors.neonOrange },
+            ]}
+          >
+            {isDisabled ? 'ENABLE' : 'DISABLE'}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -183,6 +244,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
               <CrewCard
                 key={member.id}
                 member={member}
+                starshipId={starshipId!}
                 onViewToken={handleViewToken}
               />
             ))
@@ -276,6 +338,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(13, 185, 242, 0.1)',
     borderLeftWidth: 4,
+  },
+  disabledCard: {
+    opacity: 0.8,
+    backgroundColor: 'rgba(30, 30, 30, 0.7)',
   },
   cardHeader: {
     flexDirection: 'row',
@@ -392,6 +458,9 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
     justifyContent: 'center',
+  },
+  disabledActionButton: {
+    opacity: 0.5,
   },
   actionButtonText: {
     fontSize: 8,
