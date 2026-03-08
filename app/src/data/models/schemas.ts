@@ -88,6 +88,18 @@ export const MissionStatusSchema = v.picklist(
 );
 
 /**
+ * Schema for a Task within a Mission checklist.
+ */
+export const MissionTaskSchema = v.object({
+  id: v.string('Task ID must be a string'),
+  title: v.pipe(
+    v.string('Task title must be a string'),
+    v.nonEmpty('Task title is required'),
+  ),
+  completed: v.boolean('Completed must be a boolean'),
+});
+
+/**
  * Schema for a Mission.
  * Represents a chore or task.
  */
@@ -112,6 +124,8 @@ export const MissionSchema = v.object({
   difficulty: MissionDifficultySchema,
   /** Current state of the mission */
   status: MissionStatusSchema,
+  /** Optional checklist of tasks */
+  tasks: v.optional(v.array(MissionTaskSchema), []),
 });
 
 export type Mission = v.InferOutput<typeof MissionSchema>;
