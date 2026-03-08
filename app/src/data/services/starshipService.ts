@@ -251,6 +251,44 @@ export const starshipService = {
   },
 
   /**
+   * Disables or enables a crew member.
+   */
+  async setCrewMemberDisabled(
+    starshipId: string,
+    crewId: string,
+    uid: string | undefined,
+    disabled: boolean,
+  ) {
+    dataLogger.logRequest('setCrewMemberDisabled', {
+      starshipId,
+      crewId,
+      uid,
+      disabled,
+    });
+    try {
+      // 1. Update crew member document
+      await this.updateCrewMember(starshipId, crewId, { disabled });
+
+      // 2. Update user mapping if UID exists
+      if (uid) {
+        const userStarshipRef = doc(
+          getFirestore(),
+          `api/v1/userStarships/${uid}`,
+        );
+        await updateDoc(userStarshipRef, {
+          disabled,
+          lastUpdate: serverTimestamp(),
+        });
+      }
+
+      dataLogger.logResponse('setCrewMemberDisabled', { status: 'success' });
+    } catch (error) {
+      dataLogger.logError('setCrewMemberDisabled', error);
+      throw error;
+    }
+  },
+
+  /**
    * Finds a starship by its primary captain's UID.
    */
   async getStarshipByCaptainId(captainId: string): Promise<Starship | null> {

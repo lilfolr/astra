@@ -194,6 +194,8 @@ export const CrewSchema = v.object({
   status: CrewStatusSchema,
   /** Last time the crew member was seen (epoch) */
   lastSeen: v.number('Last seen must be a number'),
+  /** Whether the crew member is disabled */
+  disabled: v.optional(v.boolean('Disabled must be a boolean'), false),
 });
 
 export type Crew = v.InferOutput<typeof CrewSchema>;
@@ -212,6 +214,8 @@ export const UserStarshipSchema = v.object({
     v.string('Starship ID must be a string'),
     v.nonEmpty('Starship ID is required'),
   ),
+  /** Whether the user is disabled */
+  disabled: v.optional(v.boolean('Disabled must be a boolean'), false),
   /** Last time this mapping was updated */
   lastUpdate: v.any(),
 });

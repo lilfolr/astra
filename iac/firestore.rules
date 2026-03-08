@@ -21,15 +21,19 @@ service cloud.firestore {
     function isMemberOfStarship(starshipId) {
       return isAuthenticated() &&
         exists(/databases/$(database)/documents/api/v1/userStarships/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/api/v1/userStarships/$(request.auth.uid)).data.starshipId == starshipId;
+        get(/databases/$(database)/documents/api/v1/userStarships/$(request.auth.uid)).data.starshipId == starshipId &&
+        get(/databases/$(database)/documents/api/v1/userStarships/$(request.auth.uid)).data.disabled != true;
     }
 
     // --- Collections ---
 
     // User to Starship mapping (1:1)
     match /api/v1/userStarships/{userId} {
-      allow read: if isAuthenticated() && request.auth.uid == userId;
-      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if isAuthenticated() && (request.auth.uid == userId || (resource != null && isCaptain(resource.data.starshipId)));
+      allow write: if isAuthenticated() && (
+        (request.auth.uid == userId && (resource == null || request.resource.data.disabled == resource.data.disabled)) ||
+        (resource != null && isCaptain(resource.data.starshipId))
+      );
     }
 
     // Starships
