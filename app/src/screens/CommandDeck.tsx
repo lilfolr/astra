@@ -26,7 +26,8 @@ import {
 import * as Icons from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
-import { useModules, useDiscoverStarship } from '../data';
+import { useModules, useDiscoverStarship, useMissions } from '../data';
+import { getAuth } from '@react-native-firebase/auth';
 
 type CommandDeckScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -41,8 +42,17 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
   const { starshipId, loading: discovering } = useDiscoverStarship();
   const { modules, loading: modulesLoading } = useModules(starshipId);
+  const { missions, loading: missionsLoading } = useMissions(starshipId);
+  const currentUser = getAuth().currentUser;
 
-  const loading = discovering || modulesLoading;
+  const loading = discovering || modulesLoading || missionsLoading;
+
+  const totalChoresCount = missions.filter(
+    m => m.status !== 'completed',
+  ).length;
+  const myChoresCount = missions.filter(
+    m => m.assignedTo === currentUser?.uid && m.status !== 'completed',
+  ).length;
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -105,12 +115,12 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           <View style={styles.missionSummary}>
             <View style={styles.missionItem}>
               <Text style={styles.missionLabel}>TOTAL CHORES</Text>
-              <Text style={styles.missionValue}>12</Text>
+              <Text style={styles.missionValue}>{totalChoresCount}</Text>
             </View>
             <View style={styles.missionDivider} />
             <View style={styles.missionItem}>
               <Text style={styles.missionLabel}>MY CHORES</Text>
-              <Text style={styles.missionValue}>3</Text>
+              <Text style={styles.missionValue}>{myChoresCount}</Text>
             </View>
           </View>
         </View>
