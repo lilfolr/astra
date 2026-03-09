@@ -221,3 +221,72 @@ export const UserStarshipSchema = v.object({
 });
 
 export type UserStarship = v.InferOutput<typeof UserStarshipSchema>;
+
+/**
+ * Schema for a Shop Item.
+ */
+export const ShopItemSchema = v.object({
+  /** Unique identifier for the item (only in state, usually from Firestore ID) */
+  id: v.optional(v.string()),
+  /** Name of the item */
+  name: v.pipe(
+    v.string('Item name must be a string'),
+    v.nonEmpty('Item name is required'),
+  ),
+  /** Detailed description of the item */
+  description: v.string('Description must be a string'),
+  /** Cost in credits */
+  price: v.pipe(
+    v.number('Price must be a number'),
+    v.minValue(0, 'Price cannot be negative'),
+  ),
+  /** Icon name from lucide-react-native */
+  icon: v.pipe(
+    v.string('Icon name must be a string'),
+    v.nonEmpty('Icon name is required'),
+  ),
+});
+
+export type ShopItem = v.InferOutput<typeof ShopItemSchema>;
+
+/**
+ * Purchase status lifecycle.
+ */
+export const PurchaseStatusSchema = v.picklist(
+  ['pending', 'fulfilled'],
+  'Status must be pending or fulfilled',
+);
+
+/**
+ * Schema for a Purchase record.
+ */
+export const PurchaseSchema = v.object({
+  /** UID of the crew member who bought the item */
+  purchaserId: v.pipe(
+    v.string('Purchaser ID must be a string'),
+    v.nonEmpty('Purchaser ID is required'),
+  ),
+  /** ID of the shop item */
+  itemId: v.pipe(
+    v.string('Item ID must be a string'),
+    v.nonEmpty('Item ID is required'),
+  ),
+  /** Name of the item at the time of purchase */
+  itemName: v.pipe(
+    v.string('Item name must be a string'),
+    v.nonEmpty('Item name is required'),
+  ),
+  /** Price paid for the item */
+  price: v.pipe(
+    v.number('Price must be a number'),
+    v.minValue(0, 'Price cannot be negative'),
+  ),
+  /** Current status of the purchase */
+  status: PurchaseStatusSchema,
+  /** When the purchase was made (epoch) */
+  createdAt: v.number('Created at must be a number'),
+  /** When the purchase was fulfilled (epoch) */
+  fulfilledAt: v.optional(v.number('Fulfilled at must be a number')),
+});
+
+export type Purchase = v.InferOutput<typeof PurchaseSchema>;

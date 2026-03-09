@@ -250,7 +250,10 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.tabLabel}>FAMILY</Text>
           </TouchableOpacity>
           <View style={styles.tabDivider} />
-          <TouchableOpacity style={styles.tabItem}>
+          <TouchableOpacity
+            style={styles.tabItem}
+            onPress={() => navigation.navigate('Shop')}
+          >
             <View style={styles.tabIconContainer}>
               <ShoppingBag color={Colors.cyan} size={24} />
             </View>
