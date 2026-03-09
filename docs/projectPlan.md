@@ -20,7 +20,7 @@
 
 - [x] **The Command Deck:** Built the "Neon Industrial" dashboard with real-time status updates and a scrolling ticker.
 - [x] **Credit/XP System:** Implemented XP and Credit (CR) tracking for crew members.
-- [ ] **The Shop (Hangar):** Build the reward redemption system for parent-defined manual rewards. (Pending)
+- [x] **The Shop (Hangar):** Build the reward redemption system for parent-defined manual rewards. (Pending)
 - [ ] **Visual FX & Sound:** Add more animations and haptic feedback to "Chore Done" and "Verification" events.
 - [ ] **AI Notifications:** Set up automated "Ship AI" notifications for overdue chores or "Hull Breaches."
 
