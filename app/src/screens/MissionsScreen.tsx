@@ -62,7 +62,6 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   const { modules, loading: modulesLoading } = useModules(starshipId);
   const { crew } = useCrew(starshipId);
 
-  // BOLT: Memoize lookups to reduce render complexity from O(M*N) to O(M+N)
   const modulesMap = useMemo(() => {
     const map = new Map();
     modules.forEach(m => map.set(m.id, m));

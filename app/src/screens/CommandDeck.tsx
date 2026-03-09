@@ -47,7 +47,6 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
 
   const loading = discovering || modulesLoading || missionsLoading;
 
-  // BOLT: Prevent redundant array filtering on every re-render
   const totalChoresCount = useMemo(
     () => missions.filter(m => m.status !== 'completed').length,
     [missions],
