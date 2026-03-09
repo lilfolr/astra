@@ -125,6 +125,7 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
         status: 'active', // Move to active immediately? User said "let users change the state... doing, done, complete".
         // "doing" likely corresponds to 'active'.
       });
+      setActiveTab('my');
     } catch {
       Alert.alert('Error', 'Failed to assign mission');
     }
