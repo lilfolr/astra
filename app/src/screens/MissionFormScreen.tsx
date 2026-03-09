@@ -85,12 +85,12 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const missionData: Mission = {
+      const missionData = {
         title,
         description,
         difficulty,
-        creditReward: parseInt(creditReward, 10) || 0,
-        moduleId: moduleId || undefined,
+        creditReward: parseInt(creditReward, 10),
+        moduleId,
         assignedTo: existingMission?.assignedTo || '',
         status: existingMission?.status || 'pending',
         tasks: tasks,

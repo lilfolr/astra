@@ -54,13 +54,13 @@ export type Starship = v.InferOutput<typeof StarshipSchema>;
 export const ModuleSchema = v.object({
   /** Name of the module (e.g., "Kitchen", "Laundry") */
   name: v.pipe(
-    v.string('Module name must be a string'),
-    v.nonEmpty('Module name is required'),
+    v.string('Please enter a valid room name.'),
+    v.nonEmpty('Please enter a room name.'),
   ),
   /** Icon name from lucide-react-native */
   icon: v.pipe(
-    v.string('Icon name must be a string'),
-    v.nonEmpty('Icon name is required'),
+    v.string('Please select an icon.'),
+    v.nonEmpty('Please select an icon.'),
   ),
   /** List of mission IDs that are incomplete in this module */
   incompleteMissions: v.array(
@@ -106,20 +106,24 @@ export const MissionTaskSchema = v.object({
 export const MissionSchema = v.object({
   /** Title of the mission */
   title: v.pipe(
-    v.string('Mission title must be a string'),
-    v.nonEmpty('Mission title is required'),
+    v.string('Please enter a valid chore title.'),
+    v.nonEmpty('Please enter a chore title.'),
   ),
   /** Detailed description of the mission */
   description: v.string('Description must be a string'),
   /** Number of credits awarded upon completion */
   creditReward: v.pipe(
-    v.number('Credit reward must be a number'),
-    v.minValue(0, 'Credit reward cannot be negative'),
+    v.number('Reward must be a number.'),
+    v.check(n => !isNaN(n), 'Please enter a reward amount.'),
+    v.minValue(0, 'Reward cannot be negative.'),
   ),
   /** UID of the crew member assigned to this mission */
   assignedTo: v.string('Assigned To must be a valid user ID'),
   /** ID of the module this mission belongs to */
-  moduleId: v.optional(v.string('Module ID must be a string')),
+  moduleId: v.pipe(
+    v.string('Please select a room for this chore.'),
+    v.nonEmpty('Please select a room for this chore.'),
+  ),
   /** How hard the mission is */
   difficulty: MissionDifficultySchema,
   /** Current state of the mission */
@@ -156,8 +160,8 @@ export const CrewSchema = v.object({
   uid: v.optional(v.string('UID must be a string')),
   /** Display name of the crew member */
   name: v.pipe(
-    v.string('Name must be a string'),
-    v.nonEmpty('Name is required'),
+    v.string('Please enter a valid name.'),
+    v.nonEmpty('Please enter a name.'),
   ),
   /** Role within the ship */
   role: CrewRoleSchema,
@@ -230,20 +234,21 @@ export const ShopItemSchema = v.object({
   id: v.optional(v.string()),
   /** Name of the item */
   name: v.pipe(
-    v.string('Item name must be a string'),
-    v.nonEmpty('Item name is required'),
+    v.string('Please enter a valid item name.'),
+    v.nonEmpty('Please enter an item name.'),
   ),
   /** Detailed description of the item */
   description: v.string('Description must be a string'),
   /** Cost in credits */
   price: v.pipe(
-    v.number('Price must be a number'),
-    v.minValue(0, 'Price cannot be negative'),
+    v.number('Price must be a number.'),
+    v.check(n => !isNaN(n), 'Please enter a price.'),
+    v.minValue(0, 'Price cannot be negative.'),
   ),
   /** Icon name from lucide-react-native */
   icon: v.pipe(
-    v.string('Icon name must be a string'),
-    v.nonEmpty('Icon name is required'),
+    v.string('Please select an icon.'),
+    v.nonEmpty('Please select an icon.'),
   ),
 });
 

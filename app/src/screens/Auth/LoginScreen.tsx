@@ -47,7 +47,21 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
       // Navigation is handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
-      Alert.alert('Authentication Failed', error.message);
+      let message = 'An unexpected error occurred.';
+      if (
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password'
+      ) {
+        message = 'Invalid email or password.';
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'The email address is invalid.';
+      } else if (error.code === 'auth/user-disabled') {
+        message = 'This user account has been disabled.';
+      } else if (error.message) {
+        message = error.message;
+      }
+      Alert.alert('Authentication Failed', message);
     } finally {
       setLoading(false);
     }

@@ -104,11 +104,6 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleSave = async () => {
-    if (!name || !icon) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
     setLoading(true);
     try {
       const moduleData = {

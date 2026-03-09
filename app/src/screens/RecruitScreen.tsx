@@ -18,6 +18,8 @@ import Colors from '../theme/colors';
 import { ArrowLeft, UserPlus } from 'lucide-react-native';
 import { starshipService, type Crew } from '../data';
 import { getAuth } from '@react-native-firebase/auth';
+import * as v from 'valibot';
+import { CrewSchema } from '../data/models/schemas';
 
 type RecruitScreenNavigationProp = StackNavigationProp<
   AuthStackParamList,
@@ -33,11 +35,6 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
 
   const handleRecruit = async () => {
-    if (!name) {
-      Alert.alert('Error', 'Please provide a Unit Name.');
-      return;
-    }
-
     setLoading(true);
     try {
       const currentUser = getAuth().currentUser;
@@ -56,7 +53,7 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
         .toUpperCase();
       const registrationCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minute expiry
 
-      const newCrew: Crew = {
+      const newCrew = {
         name,
         role: 'crew',
         credits: 0,
@@ -70,13 +67,23 @@ const RecruitScreen: React.FC<Props> = ({ navigation }) => {
         disabled: false,
       };
 
-      await starshipService.addCrewMember(starshipId, newCrew);
+      // Validate
+      v.parse(CrewSchema, newCrew);
+
+      await starshipService.addCrewMember(starshipId, newCrew as Crew);
       Alert.alert('Success', `${name} has been added!`, [
         { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
       console.error('Recruitment failed:', error);
-      Alert.alert('Failed to add member', error.message);
+      if (v.isValiError(error)) {
+        Alert.alert(
+          'Validation Error',
+          error.issues.map(i => i.message).join('\n'),
+        );
+      } else {
+        Alert.alert('Failed to add member', error.message);
+      }
     } finally {
       setLoading(false);
     }

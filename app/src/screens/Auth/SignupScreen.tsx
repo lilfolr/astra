@@ -65,8 +65,17 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
       // Navigation will be handled by auth state change in App.tsx
     } catch (error: any) {
       console.error(error);
-      // FIXME: Dont error on stuff like weakpassword
-      Alert.alert('Registration Failed', error.message);
+      let message = 'An unexpected error occurred.';
+      if (error.code === 'auth/email-already-in-use') {
+        message = 'That email address is already in use!';
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'That email address is invalid!';
+      } else if (error.code === 'auth/weak-password') {
+        message = 'The password is too weak. Please use at least 6 characters.';
+      } else if (error.message) {
+        message = error.message;
+      }
+      Alert.alert('Registration Failed', message);
     } finally {
       setLoading(false);
     }
