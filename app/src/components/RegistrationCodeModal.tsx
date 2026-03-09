@@ -91,8 +91,8 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
             <X color={Colors.white} size={24} />
           </TouchableOpacity>
 
-          <Text style={styles.title}>REGISTRATION TOKEN</Text>
-          <Text style={styles.subtitle}>SCAN TO JOIN FLEET</Text>
+          <Text style={styles.title}>JOIN CODE</Text>
+          <Text style={styles.subtitle}>SCAN TO JOIN FAMILY</Text>
 
           <View style={styles.qrContainer}>
             <View style={styles.qrWrapper}>
@@ -106,7 +106,7 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
           </View>
 
           <View style={styles.codeContainer}>
-            <Text style={styles.codeLabel}>MANUAL OVERRIDE CODE</Text>
+            <Text style={styles.codeLabel}>MANUAL JOIN CODE</Text>
             <Text style={styles.codeValue}>{code}</Text>
           </View>
 
@@ -133,7 +133,7 @@ const RegistrationCodeModal: React.FC<RegistrationCodeModalProps> = ({
               style={[styles.refreshIcon, loading && styles.disabledIcon]}
             />
             <Text style={styles.refreshButtonText}>
-              {loading ? 'RE-ESTABLISHING...' : 'REFRESH SIGNAL'}
+              {loading ? 'REFRESHING...' : 'REFRESH CODE'}
             </Text>
           </TouchableOpacity>
         </View>

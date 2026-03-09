@@ -44,7 +44,7 @@ const JoinFleetScreen: React.FC<Props> = ({ navigation }) => {
 
   const handleJoin = async () => {
     if (!accessCode) {
-      Alert.alert('Error', 'Please enter an identity token.');
+      Alert.alert('Error', 'Please enter an invite code.');
       return;
     }
 
