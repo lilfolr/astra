@@ -192,6 +192,8 @@ export const CrewSchema = v.object({
     v.number('Registration code expiry must be a number'),
     0,
   ),
+  /** Verification code provided during join */
+  verificationCode: v.optional(v.string('Verification code must be a string')),
   /** Optional avatar URL */
   avatar: v.optional(v.string('Avatar must be a string')),
   /** Current status of the crew member link */
@@ -218,6 +220,8 @@ export const UserStarshipSchema = v.object({
     v.string('Starship ID must be a string'),
     v.nonEmpty('Starship ID is required'),
   ),
+  /** Optional crew document ID for verification during join */
+  crewId: v.optional(v.string('Crew ID must be a string')),
   /** Whether the user is disabled */
   disabled: v.optional(v.boolean('Disabled must be a boolean'), false),
   /** Last time this mapping was updated */

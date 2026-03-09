@@ -400,10 +400,19 @@ export const starshipService = {
   /**
    * Links a user to a starship.
    */
-  async linkUserToStarship(userId: string, starshipId: string) {
-    dataLogger.logRequest('linkUserToStarship', { userId, starshipId });
+  async linkUserToStarship(
+    userId: string,
+    starshipId: string,
+    crewId?: string,
+  ) {
+    dataLogger.logRequest('linkUserToStarship', { userId, starshipId, crewId });
     try {
-      const data = { userId, starshipId, lastUpdate: serverTimestamp() };
+      const data = {
+        userId,
+        starshipId,
+        crewId,
+        lastUpdate: serverTimestamp(),
+      };
       // Note: We don't validate serverTimestamp() with UserStarshipSchema if it's strictly typed,
       // but v.any() for lastUpdate should handle it.
       v.parse(UserStarshipSchema, data);
@@ -500,6 +509,7 @@ export const starshipService = {
         uid: currentUser.uid,
         status: 'stable',
         lastSeen: Date.now(),
+        verificationCode: code, // Required by security rules for join verification
       });
 
       dataLogger.logResponse('joinStarshipAsCrew', { status: 'success' });

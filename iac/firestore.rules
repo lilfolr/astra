@@ -31,7 +31,19 @@ service cloud.firestore {
     match /api/v1/userStarships/{userId} {
       allow read: if isAuthenticated() && (request.auth.uid == userId || (resource != null && isCaptain(resource.data.starshipId)));
       allow write: if isAuthenticated() && (
-        (request.auth.uid == userId && (resource == null || request.resource.data.disabled == resource.data.disabled)) ||
+        // A user can create their own mapping if:
+        // 1. They are the primary captain of that starship
+        // 2. OR they are an existing member (verified via crew document)
+        (request.auth.uid == userId && resource == null && (
+          getStarshipData(request.resource.data.starshipId).primaryCaptainId == userId ||
+          (request.resource.data.crewId != null &&
+           get(/databases/$(database)/documents/api/v1/starships/$(request.resource.data.starshipId)/crew/$(request.resource.data.crewId)).data.uid == userId)
+        )) ||
+        // A user can update their own mapping as long as they don't change the disabled flag or starshipId
+        (request.auth.uid == userId && resource != null &&
+         request.resource.data.disabled == resource.data.disabled &&
+         request.resource.data.starshipId == resource.data.starshipId) ||
+        // A captain can update any mapping in their starship
         (resource != null && isCaptain(resource.data.starshipId))
       );
     }
@@ -93,6 +105,8 @@ service cloud.firestore {
             (
               (resource.data.uid == null || resource.data.uid == "") &&
               request.resource.data.uid == request.auth.uid &&
+              // Use a separate verificationCode field that MUST be provided in the request
+              request.resource.data.verificationCode == resource.data.registrationCode &&
               resource.data.registrationCodeExpiry > request.time.toMillis()
             )
           )
