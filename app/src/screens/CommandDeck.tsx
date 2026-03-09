@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import {
   StyleSheet,
   View,
@@ -47,12 +47,17 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
 
   const loading = discovering || modulesLoading || missionsLoading;
 
-  const totalChoresCount = missions.filter(
-    m => m.status !== 'completed',
-  ).length;
-  const myChoresCount = missions.filter(
-    m => m.assignedTo === currentUser?.uid && m.status !== 'completed',
-  ).length;
+  const totalChoresCount = useMemo(
+    () => missions.filter(m => m.status !== 'completed').length,
+    [missions],
+  );
+  const myChoresCount = useMemo(
+    () =>
+      missions.filter(
+        m => m.assignedTo === currentUser?.uid && m.status !== 'completed',
+      ).length,
+    [missions, currentUser],
+  );
 
   useEffect(() => {
     const pulse = Animated.loop(

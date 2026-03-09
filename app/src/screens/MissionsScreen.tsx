@@ -62,9 +62,23 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   const { modules, loading: modulesLoading } = useModules(starshipId);
   const { crew } = useCrew(starshipId);
 
+  const modulesMap = useMemo(() => {
+    const map = new Map();
+    modules.forEach(m => map.set(m.id, m));
+    return map;
+  }, [modules]);
+
+  const crewMap = useMemo(() => {
+    const map = new Map();
+    crew.forEach(c => {
+      if (c.uid) map.set(c.uid, c);
+    });
+    return map;
+  }, [crew]);
+
   const myCrewMember = useMemo(() => {
-    return crew.find(c => c.uid === currentUser?.uid);
-  }, [crew, currentUser]);
+    return currentUser ? crewMap.get(currentUser.uid) : null;
+  }, [crewMap, currentUser]);
 
   const isCaptain = myCrewMember?.role === 'captain' || true; // HACK: While permissions are fixed
 
@@ -179,8 +193,10 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const renderMissionCard = (mission: Mission & { id: string }) => {
-    const module = modules.find(m => m.id === mission.moduleId);
-    const assignedUser = crew.find(c => c.uid === mission.assignedTo);
+    const module = mission.moduleId ? modulesMap.get(mission.moduleId) : null;
+    const assignedUser = mission.assignedTo
+      ? crewMap.get(mission.assignedTo)
+      : null;
 
     return (
       <View key={mission.id} style={styles.card}>
