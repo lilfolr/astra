@@ -111,17 +111,12 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleSave = async () => {
-    if (!name || !price || !icon) {
-      Alert.alert('Error', 'Please fill in all required fields');
-      return;
-    }
-
     setLoading(true);
     try {
       const itemData = {
         name,
         description,
-        price: parseInt(price, 10) || 0,
+        price: parseInt(price, 10),
         icon,
       };
 
