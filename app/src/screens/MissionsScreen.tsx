@@ -156,9 +156,13 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   ) => {
     if (!starshipId) return;
     try {
-      await starshipService.updateMission(starshipId, missionId, {
-        status: newStatus,
-      });
+      if (newStatus === 'completed') {
+        await starshipService.verifyMission(starshipId, missionId);
+      } else {
+        await starshipService.updateMission(starshipId, missionId, {
+          status: newStatus,
+        });
+      }
     } catch {
       Alert.alert('Error', 'Failed to update mission status');
     }

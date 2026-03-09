@@ -14,7 +14,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
 import {
   FileText,
-  Award,
   UserX,
   UserCheck,
   PlusCircle,
@@ -133,10 +132,11 @@ const CrewCard = ({ member, starshipId, onViewToken }: CrewCardProps) => {
           <FileText size={14} color={Colors.grey} />
           <Text style={styles.actionButtonText}>CHORE HISTORY</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <Award size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>EDIT LEVEL/POINTS</Text>
-        </TouchableOpacity>
+        <View style={styles.statInfo}>
+          <Text style={styles.statInfoText}>CR: {member.credits || 0}</Text>
+          <Text style={styles.statInfoText}>XP: {member.xp || 0}</Text>
+          <Text style={styles.statInfoText}>LVL: {member.level || 1}</Text>
+        </View>
         <TouchableOpacity
           style={styles.actionButton}
           onPress={() => onViewToken(member)}
@@ -404,6 +404,25 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '600',
     letterSpacing: 1,
+  },
+  statInfo: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    flex: 2,
+    minWidth: '92%',
+    justifyContent: 'space-around',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  statInfoText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: Colors.cyan,
+    letterSpacing: 0.5,
   },
   centered: {
     flex: 1,

@@ -39,6 +39,8 @@ const DIFFICULTIES = [
   { id: 'hard', label: 'HARD', color: '#ef4444' },
 ] as const;
 
+const REWARD_PRESETS = [10, 50, 100];
+
 const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const { starshipId, mission: existingMission } = route.params;
   const isEditing = !!existingMission;
@@ -53,7 +55,12 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
     existingMission?.difficulty || 'easy',
   );
   const [creditReward, setCreditReward] = useState(
-    existingMission?.creditReward?.toString() || '100',
+    existingMission?.creditReward?.toString() || '50',
+  );
+  const [isCustomReward, setIsCustomReward] = useState(
+    existingMission?.creditReward
+      ? !REWARD_PRESETS.includes(existingMission.creditReward)
+      : false,
   );
   const [moduleId, setModuleId] = useState(existingMission?.moduleId || '');
   const [tasks, setTasks] = useState(existingMission?.tasks || []);
@@ -270,13 +277,61 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.sectionLine} />
             </View>
 
-            <SciFiInput
-              label="Credit Reward"
-              value={creditReward}
-              onChangeText={setCreditReward}
-              placeholder="100"
-              keyboardType="numeric"
-            />
+            <Text style={styles.label}>Reward (Credits & XP)</Text>
+            <View style={styles.rewardPresetsGrid}>
+              {REWARD_PRESETS.map(preset => (
+                <TouchableOpacity
+                  key={preset}
+                  style={[
+                    styles.presetItem,
+                    !isCustomReward &&
+                      parseInt(creditReward, 10) === preset &&
+                      styles.presetItemActive,
+                  ]}
+                  onPress={() => {
+                    setCreditReward(preset.toString());
+                    setIsCustomReward(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.presetItemText,
+                      !isCustomReward &&
+                        parseInt(creditReward, 10) === preset &&
+                        styles.presetItemTextActive,
+                    ]}
+                  >
+                    {preset}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={[
+                  styles.presetItem,
+                  isCustomReward && styles.presetItemActive,
+                ]}
+                onPress={() => setIsCustomReward(true)}
+              >
+                <Text
+                  style={[
+                    styles.presetItemText,
+                    isCustomReward && styles.presetItemTextActive,
+                  ]}
+                >
+                  CUSTOM
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {isCustomReward && (
+              <SciFiInput
+                label="Custom Reward Amount"
+                value={creditReward}
+                onChangeText={setCreditReward}
+                placeholder="Enter custom amount"
+                keyboardType="numeric"
+              />
+            )}
 
             <Text style={styles.label}>Select Module (Room)</Text>
             <View style={styles.moduleGrid}>
@@ -441,6 +496,33 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.6)',
   },
   moduleItemTextActive: {
+    color: Colors.white,
+  },
+  rewardPresetsGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  presetItem: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 255, 255, 0.2)',
+    borderRadius: 8,
+    backgroundColor: 'rgba(0, 255, 255, 0.05)',
+  },
+  presetItemActive: {
+    borderColor: Colors.cyan,
+    backgroundColor: 'rgba(0, 255, 255, 0.2)',
+  },
+  presetItemText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'rgba(255, 255, 255, 0.5)',
+  },
+  presetItemTextActive: {
     color: Colors.white,
   },
   emptyText: {
