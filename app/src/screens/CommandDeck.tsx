@@ -134,14 +134,6 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
-          {/* Scrolling Ticker */}
-          <View style={styles.tickerContainer}>
-            <Text style={styles.tickerText} numberOfLines={1}>
-              Family is doing great! • New chore assigned in Kitchen • Everyone
-              is active today • Welcome back!
-            </Text>
-          </View>
-
           {/* Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
@@ -387,21 +379,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 120, // Space for tab bar
-  },
-  tickerContainer: {
-    backgroundColor: 'rgba(0, 255, 255, 0.05)',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0, 255, 255, 0.2)',
-    paddingVertical: 4,
-    marginBottom: 20,
-    marginHorizontal: -20, // Bleed to edges
-    paddingHorizontal: 20,
-  },
-  tickerText: {
-    color: 'rgba(0, 255, 255, 0.8)',
-    fontSize: 10,
-    fontFamily: 'monospace',
   },
   statsRow: {
     flexDirection: 'row',
