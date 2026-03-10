@@ -137,8 +137,8 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           {/* Scrolling Ticker */}
           <View style={styles.tickerContainer}>
             <Text style={styles.tickerText} numberOfLines={1}>
-              Family is doing great! /// New chore assigned in Kitchen ///
-              Everyone is active today /// Welcome back!
+              Family is doing great! • New chore assigned in Kitchen • Everyone
+              is active today • Welcome back!
             </Text>
           </View>
 
@@ -158,9 +158,9 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
             </View>
             <View style={styles.statCard}>
               <View>
-                <Text style={styles.statLabel}>CREDITS</Text>
+                <Text style={styles.statLabel}>POINTS</Text>
                 <Text style={styles.statValue}>
-                  {myCrewMember?.credits || 0} CR
+                  {myCrewMember?.credits || 0} PTS
                 </Text>
               </View>
               <CircleDollarSign color={Colors.cyan} size={24} />

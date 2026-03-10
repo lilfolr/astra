@@ -242,7 +242,7 @@ const ModuleFormScreen: React.FC<Props> = ({ navigation, route }) => {
               label="Name"
               value={name}
               onChangeText={setName}
-              placeholder="ENTER_ROOM_NAME..."
+              placeholder="ENTER ROOM NAME..."
             />
           </View>
 

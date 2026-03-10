@@ -133,7 +133,7 @@ const CrewCard = ({ member, starshipId, onViewToken }: CrewCardProps) => {
           <Text style={styles.actionButtonText}>CHORE HISTORY</Text>
         </TouchableOpacity>
         <View style={styles.statInfo}>
-          <Text style={styles.statInfoText}>CR: {member.credits || 0}</Text>
+          <Text style={styles.statInfoText}>PTS: {member.credits || 0}</Text>
           <Text style={styles.statInfoText}>XP: {member.xp || 0}</Text>
           <Text style={styles.statInfoText}>LVL: {member.level || 1}</Text>
         </View>
@@ -142,7 +142,7 @@ const CrewCard = ({ member, starshipId, onViewToken }: CrewCardProps) => {
           onPress={() => onViewToken(member)}
         >
           <QrCode size={14} color={Colors.grey} />
-          <Text style={styles.actionButtonText}>VIEW REGISTRATION TOKEN</Text>
+          <Text style={styles.actionButtonText}>VIEW JOIN CODE</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -216,7 +216,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
               <View style={styles.pulseContainer}>
                 <View style={styles.pulseDot} />
               </View>
-              <Text style={styles.overrideText}>PARENT CONTROL: ACTIVE</Text>
+              <Text style={styles.overrideText}>PARENTAL CONTROLS ACTIVE</Text>
             </View>
           </View>
         </View>
@@ -233,7 +233,7 @@ const RosterScreen: React.FC<Props> = ({ navigation }) => {
             </View>
           ) : error ? (
             <View style={styles.centered}>
-              <Text style={styles.errorText}>UPLINK ERROR: {error}</Text>
+              <Text style={styles.errorText}>CONNECTION ERROR: {error}</Text>
             </View>
           ) : crew.length === 0 ? (
             <View style={styles.centered}>

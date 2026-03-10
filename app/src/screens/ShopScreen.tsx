@@ -61,13 +61,13 @@ const ShopScreen: React.FC<Props> = ({ navigation }) => {
 
     if (myCrewMember.credits < item.price) {
       Alert.alert(
-        'INSUFFICIENT CREDITS',
-        'You do not have enough credits for this item.',
+        'NOT ENOUGH POINTS',
+        'You do not have enough points for this item.',
       );
       return;
     }
 
-    Alert.alert('CONFIRM PURCHASE', `Buy ${item.name} for ${item.price} CR?`, [
+    Alert.alert('CONFIRM PURCHASE', `Buy ${item.name} for ${item.price} PTS?`, [
       { text: 'CANCEL', style: 'cancel' },
       {
         text: 'PURCHASE',
@@ -130,7 +130,7 @@ const ShopScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.itemFooter}>
             <View style={styles.priceTag}>
               <CircleDollarSign size={14} color={Colors.neonOrange} />
-              <Text style={styles.priceText}>{item.price} CR</Text>
+              <Text style={styles.priceText}>{item.price} PTS</Text>
             </View>
             <TouchableOpacity
               style={[
@@ -181,7 +181,7 @@ const ShopScreen: React.FC<Props> = ({ navigation }) => {
 
         <View style={styles.purchaseBody}>
           <Text style={styles.purchaseItemName}>{purchase.itemName}</Text>
-          <Text style={styles.purchasePrice}>{purchase.price} CR</Text>
+          <Text style={styles.purchasePrice}>{purchase.price} PTS</Text>
         </View>
 
         {isCaptain && isPending && (
@@ -214,11 +214,11 @@ const ShopScreen: React.FC<Props> = ({ navigation }) => {
             />
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>PROVISIONS</Text>
+            <Text style={styles.headerTitle}>REWARDS</Text>
             <View style={styles.creditsDisplay}>
               <CircleDollarSign size={14} color={Colors.neonOrange} />
               <Text style={styles.creditsText}>
-                {myCrewMember?.credits || 0} CR
+                {myCrewMember?.credits || 0} PTS
               </Text>
             </View>
           </View>
@@ -271,14 +271,14 @@ const ShopScreen: React.FC<Props> = ({ navigation }) => {
               }
             >
               <Plus size={20} color={Colors.cyan} />
-              <Text style={styles.addItemButtonText}>ADD NEW PROVISION</Text>
+              <Text style={styles.addItemButtonText}>ADD NEW REWARD</Text>
             </TouchableOpacity>
           )}
 
           {discovering || itemsLoading || purchasesLoading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
-              <Text style={styles.loadingText}>ACCESSING LOGISTICS...</Text>
+              <Text style={styles.loadingText}>LOADING REWARDS...</Text>
             </View>
           ) : activeTab === 'items' ? (
             items.length === 0 ? (

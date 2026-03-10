@@ -129,12 +129,12 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
     if (!existingMission) return;
 
     Alert.alert(
-      'DECOMMISSION MISSION',
-      `Are you sure you want to remove the mission "${title}"?`,
+      'DELETE CHORE',
+      `Are you sure you want to remove the chore "${title}"?`,
       [
         { text: 'CANCEL', style: 'cancel' },
         {
-          text: 'REMOVE',
+          text: 'DELETE',
           style: 'destructive',
           onPress: async () => {
             setLoading(true);
@@ -190,14 +190,14 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               label="Chore Title"
               value={title}
               onChangeText={setTitle}
-              placeholder="E.G. SCAN FOR RADIATION..."
+              placeholder="E.G. CLEAN THE KITCHEN..."
             />
 
             <SciFiInput
               label="Instructions"
               value={description}
               onChangeText={setDescription}
-              placeholder="DETAILED_ORDERS..."
+              placeholder="CHORE DESCRIPTION..."
               multiline
               numberOfLines={3}
             />
@@ -225,7 +225,7 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
                   label=""
                   value={newTaskTitle}
                   onChangeText={setNewTaskTitle}
-                  placeholder="ADD_SUB_TASK..."
+                  placeholder="ADD SUB-TASK..."
                 />
               </View>
               <TouchableOpacity
@@ -277,7 +277,7 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               <View style={styles.sectionLine} />
             </View>
 
-            <Text style={styles.label}>Reward (Credits & XP)</Text>
+            <Text style={styles.label}>Reward (Points & XP)</Text>
             <View style={styles.rewardPresetsGrid}>
               {REWARD_PRESETS.map(preset => (
                 <TouchableOpacity
@@ -389,7 +389,7 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               disabled={loading}
             >
               <Trash2 color={Colors.neonOrange} size={16} />
-              <Text style={styles.deleteButtonText}>DECOMMISSION MISSION</Text>
+              <Text style={styles.deleteButtonText}>DELETE CHORE</Text>
             </TouchableOpacity>
           )}
         </ScrollView>

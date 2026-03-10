@@ -28,7 +28,7 @@ const CreateProfileScreen: React.FC<Props> = ({ navigation }) => {
             style={{ marginBottom: 20 }}
           />
           <Text style={styles.title}>CREATE PROFILE</Text>
-          <Text style={styles.subtitle}>[ STEP 2: SETUP ]</Text>
+          <Text style={styles.subtitle}>STEP 2: SETUP</Text>
           <Text style={styles.description}>
             This screen is coming soon. Your profile is being set up.
           </Text>

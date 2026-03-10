@@ -228,7 +228,7 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           </View>
           <View style={styles.rewardContainer}>
             <CircleDollarSign size={14} color={Colors.neonOrange} />
-            <Text style={styles.rewardText}>{mission.creditReward} CR</Text>
+            <Text style={styles.rewardText}>{mission.creditReward} PTS</Text>
           </View>
         </View>
 
@@ -373,7 +373,7 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>CHORES</Text>
-            <Text style={styles.headerSubtitle}>CURRENT OPERATIONAL TASKS</Text>
+            <Text style={styles.headerSubtitle}>MANAGE YOUR FAMILY CHORES</Text>
           </View>
           <ClipboardList
             size={28}
@@ -448,20 +448,18 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
           {missionsLoading || modulesLoading ? (
             <View style={styles.centered}>
               <ActivityIndicator color={Colors.cyan} size="large" />
-              <Text style={styles.loadingText}>ACCESSING CHORE DATA...</Text>
+              <Text style={styles.loadingText}>LOADING CHORES...</Text>
             </View>
           ) : missionsError ? (
             <View style={styles.centered}>
               <Text style={styles.errorText}>
-                UPLINK ERROR: {missionsError}
+                CONNECTION ERROR: {missionsError}
               </Text>
             </View>
           ) : filteredMissions.length === 0 ? (
             <View style={styles.centered}>
               <LayoutGrid size={48} color={Colors.cyan} opacity={0.2} />
-              <Text style={styles.emptyText}>
-                NO CHORES FOUND IN THIS SECTOR
-              </Text>
+              <Text style={styles.emptyText}>NO CHORES FOUND</Text>
             </View>
           ) : (
             filteredMissions.map(renderMissionCard)

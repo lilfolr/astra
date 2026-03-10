@@ -51,31 +51,31 @@ const SUGGESTIONS = [
   {
     name: '30m Screen Time',
     price: 50,
-    description: 'Extra 30 minutes of digital exploration.',
+    description: 'Extra 30 minutes of screen time.',
     icon: 'Tv',
   },
   {
     name: 'Treat / Dessert',
     price: 30,
-    description: 'Single serving of high-calorie rations.',
+    description: 'A special treat or dessert.',
     icon: 'IceCream',
   },
   {
     name: 'Small Toy/Gift',
     price: 100,
-    description: 'A minor physical item for the collection.',
+    description: 'A small toy or gift.',
     icon: 'Gamepad2',
   },
   {
     name: 'Outing to Zoo',
     price: 500,
-    description: 'Excursion to the local biological reserve.',
+    description: 'A fun trip to the zoo.',
     icon: 'Ticket',
   },
   {
     name: 'Pizza Night',
     price: 300,
-    description: 'The family shares a circular nutrient disc.',
+    description: 'Enjoy a pizza night together!',
     icon: 'Pizza',
   },
 ];
@@ -188,7 +188,7 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
             <ArrowLeft color={Colors.cyan} size={24} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>
-            {isEditing ? 'EDIT PROVISION' : 'ADD PROVISION'}
+            {isEditing ? 'EDIT REWARD' : 'ADD REWARD'}
           </Text>
           <View style={{ width: 24 }} />
         </View>
@@ -212,7 +212,7 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
                   onPress={() => handleSelectSuggestion(s)}
                 >
                   <Text style={styles.suggestionName}>{s.name}</Text>
-                  <Text style={styles.suggestionPrice}>{s.price} CR</Text>
+                  <Text style={styles.suggestionPrice}>{s.price} PTS</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -239,7 +239,7 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
               numberOfLines={2}
             />
             <SciFiInput
-              label="Price (CR)"
+              label="Price (PTS)"
               value={price}
               onChangeText={setPrice}
               placeholder="50"
@@ -276,7 +276,7 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
           <View style={{ height: 20 }} />
 
           <SciFiButton
-            title={isEditing ? 'Update Provision' : 'Add Provision'}
+            title={isEditing ? 'Update Reward' : 'Add Reward'}
             onPress={handleSave}
             disabled={loading}
             icon={
@@ -302,7 +302,7 @@ const ShopItemFormScreen: React.FC<Props> = ({ navigation, route }) => {
               disabled={loading}
             >
               <Trash2 color={Colors.neonOrange} size={16} />
-              <Text style={styles.deleteButtonText}>REMOVE FROM SHOP</Text>
+              <Text style={styles.deleteButtonText}>DELETE REWARD</Text>
             </TouchableOpacity>
           )}
         </ScrollView>
