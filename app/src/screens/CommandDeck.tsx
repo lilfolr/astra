@@ -96,7 +96,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
               <Rocket color={Colors.cyan} size={24} style={styles.headerIcon} />
               <Text style={styles.title}>DASHBOARD</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
               <Settings color={Colors.cyan} size={24} />
             </TouchableOpacity>
           </View>

@@ -41,6 +41,10 @@ export const StarshipSchema = v.object({
   ),
   /** Current status of the ship */
   status: StarshipStatusSchema,
+  /** Whether vacation mode is active (disables all timers) */
+  vacationMode: v.optional(v.boolean('Vacation mode must be a boolean'), false),
+  /** Whether chores are auto-validated */
+  autoValidate: v.optional(v.boolean('Auto-validate must be a boolean'), false),
   /** Last time the starship record was updated */
   lastUpdate: v.any(), // Typically a Firebase Timestamp
 });
@@ -200,6 +204,12 @@ export const CrewSchema = v.object({
   lastSeen: v.number('Last seen must be a number'),
   /** Whether the crew member is disabled */
   disabled: v.optional(v.boolean('Disabled must be a boolean'), false),
+  /** Preferred UI theme */
+  theme: v.optional(v.picklist(['light', 'dark', 'auto']), 'auto'),
+  /** Whether notifications are enabled */
+  notificationsEnabled: v.optional(v.boolean(), true),
+  /** Whether audio effects are enabled */
+  audioEffectsEnabled: v.optional(v.boolean(), true),
 });
 
 export type Crew = v.InferOutput<typeof CrewSchema>;

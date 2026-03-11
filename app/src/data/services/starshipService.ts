@@ -711,6 +711,9 @@ export const starshipService = {
           registrationCode: '',
           registrationCodeExpiry: 0,
           disabled: false,
+          theme: 'auto',
+          notificationsEnabled: true,
+          audioEffectsEnabled: true,
         };
         await this.addCrewMember(starshipId, newCrew);
         dataLogger.logResponse('ensureCaptainCrewRecord', {
