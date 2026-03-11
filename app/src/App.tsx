@@ -35,7 +35,7 @@ export type AuthStackParamList = {
   Recruit: undefined;
   ModuleForm: { starshipId: string; module?: Module & { id: string } };
   MissionForm: { starshipId: string; mission?: Mission & { id: string } };
-  Missions: undefined;
+  Missions: { moduleId?: string };
   Shop: undefined;
   ShopItemForm: { starshipId: string; item?: ShopItem & { id: string } };
 };

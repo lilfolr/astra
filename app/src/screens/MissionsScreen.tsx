@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 import { AuthStackParamList } from '../App';
 import {
   ClipboardList,
@@ -43,14 +44,20 @@ type MissionsScreenNavigationProp = StackNavigationProp<
   'Missions'
 >;
 
+type MissionsScreenRouteProp = RouteProp<AuthStackParamList, 'Missions'>;
+
 interface Props {
   navigation: MissionsScreenNavigationProp;
+  route: MissionsScreenRouteProp;
 }
 
 type TabType = 'my' | 'all' | 'available';
 
-const MissionsScreen: React.FC<Props> = ({ navigation }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('my');
+const MissionsScreen: React.FC<Props> = ({ navigation, route }) => {
+  const initialModuleId = route.params?.moduleId;
+  const [activeTab, setActiveTab] = useState<TabType>(
+    initialModuleId ? 'all' : 'my',
+  );
   const [starshipId, setStarshipId] = useState<string | null>(null);
   const currentUser = getAuth().currentUser;
 
@@ -102,20 +109,26 @@ const MissionsScreen: React.FC<Props> = ({ navigation }) => {
   const filteredMissions = useMemo(() => {
     if (!missions) return [];
 
+    let filtered = missions;
+
+    if (initialModuleId) {
+      filtered = filtered.filter(m => m.moduleId === initialModuleId);
+    }
+
     switch (activeTab) {
       case 'my':
-        return missions.filter(
+        return filtered.filter(
           m => m.assignedTo === currentUser?.uid && m.status !== 'completed',
         );
       case 'available':
-        return missions.filter(
+        return filtered.filter(
           m => (!m.assignedTo || m.assignedTo === '') && m.status === 'pending',
         );
       case 'all':
       default:
-        return missions;
+        return filtered;
     }
-  }, [missions, activeTab, currentUser]);
+  }, [missions, activeTab, currentUser, initialModuleId]);
 
   const handleAssignToMe = async (missionId: string) => {
     if (!starshipId || !currentUser) return;

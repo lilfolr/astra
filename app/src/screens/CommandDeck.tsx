@@ -27,6 +27,7 @@ import * as Icons from 'lucide-react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from '../App';
 import { useModules, useDiscoverStarship, useMissions, useCrew } from '../data';
+import Ticker from '../components/Ticker';
 import { getAuth } from '@react-native-firebase/auth';
 
 type CommandDeckScreenNavigationProp = StackNavigationProp<
@@ -46,6 +47,15 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
   const currentUser = getAuth().currentUser;
   const myCrewMember = crew.find(c => c.uid === currentUser?.uid);
 
+  const xpProgress = useMemo(() => {
+    if (!myCrewMember) return 0;
+    const currentLevel = myCrewMember.level || 1;
+    const xp = myCrewMember.xp || 0;
+    const xpNeededForCurrentLevel = (currentLevel - 1) * 100;
+    const xpIntoLevel = xp - xpNeededForCurrentLevel;
+    return Math.min(Math.max(xpIntoLevel / 100, 0), 1);
+  }, [myCrewMember]);
+
   const { missions, loading: missionsLoading } = useMissions(starshipId);
   const loading =
     discovering || modulesLoading || missionsLoading || crewLoading;
@@ -54,6 +64,34 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
     () => missions.filter(m => m.status !== 'completed').length,
     [missions],
   );
+
+  const familyStatus = useMemo(() => {
+    if (missions.length === 0) return 100;
+    const completed = missions.filter(m => m.status === 'completed').length;
+    return Math.floor((completed / missions.length) * 100);
+  }, [missions]);
+
+  const familyStatusLabel = useMemo(() => {
+    if (familyStatus >= 90) return 'ALL SYSTEMS NOMINAL';
+    if (familyStatus >= 70) return 'NOMINAL';
+    if (familyStatus >= 50) return 'DEGRADED';
+    if (familyStatus >= 30) return 'CRITICAL';
+    return 'BREACH DETECTED';
+  }, [familyStatus]);
+
+  const tickerMessages = useMemo(() => {
+    const messages = ['SYSTEMS NOMINAL', 'ALL CREW REPORTED'];
+    if (totalChoresCount > 0) {
+      messages.push(`${totalChoresCount} MISSIONS PENDING`);
+    }
+    const myPending = missions.filter(
+      m => m.assignedTo === currentUser?.uid && m.status === 'active',
+    );
+    if (myPending.length > 0) {
+      messages.push(`ATTENTION: ${myPending.length} ACTIVE CHORES`);
+    }
+    return messages;
+  }, [totalChoresCount, missions, currentUser]);
   const myChoresCount = useMemo(
     () =>
       missions.filter(
@@ -104,17 +142,19 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           <View style={styles.integrityBarContainer}>
             <View style={styles.integrityBarLabelContainer}>
               <Text style={styles.integrityBarLabel}>FAMILY STATUS</Text>
-              <Text style={styles.integrityValue}>85%</Text>
+              <Text style={styles.integrityValue}>{familyStatus}%</Text>
             </View>
             <View style={styles.integrityBarBackground}>
-              <View style={[styles.integrityBarFill, { width: '85%' }]} />
+              <View
+                style={[styles.integrityBarFill, { width: `${familyStatus}%` }]}
+              />
             </View>
             <View style={styles.integritySubtextContainer}>
-              <Text style={styles.integritySubtext}>ALL GOOD</Text>
+              <Text style={styles.integritySubtext}>{familyStatusLabel}</Text>
               <Animated.Text
                 style={[styles.integritySubtext, { opacity: pulseAnim }]}
               >
-                STAYING SAFE
+                {familyStatus >= 70 ? 'STAYING SAFE' : 'ACTION REQUIRED'}
               </Animated.Text>
             </View>
           </View>
@@ -133,7 +173,30 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
 
+        <Ticker messages={tickerMessages} />
+
         <ScrollView contentContainerStyle={styles.content}>
+          {/* Quick Action */}
+          {totalChoresCount > 0 && (
+            <TouchableOpacity
+              style={styles.quickAction}
+              onPress={() => navigation.navigate('Missions' as any)}
+            >
+              <View style={styles.quickActionContent}>
+                <Zap color={Colors.neonOrange} size={20} />
+                <View>
+                  <Text style={styles.quickActionTitle}>
+                    NEXT MISSION READY
+                  </Text>
+                  <Text style={styles.quickActionSubtitle}>
+                    {totalChoresCount} CHORES TO BE COMPLETED
+                  </Text>
+                </View>
+              </View>
+              <ArrowRight color={Colors.neonOrange} size={20} />
+            </TouchableOpacity>
+          )}
+
           {/* Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
@@ -143,9 +206,17 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                   L{myCrewMember?.level || 1}
                 </Text>
               </View>
-              <View>
+              <View style={{ flex: 1, marginLeft: 10 }}>
                 <Text style={styles.statLabel}>XP</Text>
                 <Text style={styles.statValue}>{myCrewMember?.xp || 0}</Text>
+                <View style={styles.xpBarBackground}>
+                  <View
+                    style={[
+                      styles.xpBarFill,
+                      { width: `${xpProgress * 100}%` },
+                    ]}
+                  />
+                </View>
               </View>
             </View>
             <View style={styles.statCard}>
@@ -199,6 +270,11 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
                         key={module.id}
                         style={styles.moduleCard}
                         onPress={() =>
+                          navigation.navigate('Missions', {
+                            moduleId: module.id,
+                          })
+                        }
+                        onLongPress={() =>
                           starshipId &&
                           navigation.navigate('ModuleForm', {
                             starshipId,
@@ -230,7 +306,7 @@ const CommandDeck: React.FC<Props> = ({ navigation }) => {
         <View style={styles.tabBar}>
           <TouchableOpacity
             style={styles.tabItem}
-            onPress={() => navigation.navigate('Missions')}
+            onPress={() => navigation.navigate('Missions' as any)}
           >
             <View style={styles.tabIconContainer}>
               <ClipboardList color={Colors.cyan} size={24} />
@@ -371,6 +447,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
+  xpBarBackground: {
+    height: 4,
+    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+    borderRadius: 2,
+    marginTop: 4,
+    overflow: 'hidden',
+  },
+  xpBarFill: {
+    height: '100%',
+    backgroundColor: Colors.cyan,
+    borderRadius: 2,
+  },
   missionDivider: {
     width: 1,
     backgroundColor: 'rgba(0, 255, 255, 0.2)',
@@ -420,6 +508,33 @@ const styles = StyleSheet.create({
   statValue: {
     color: Colors.white,
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  quickAction: {
+    backgroundColor: 'rgba(255, 95, 31, 0.1)',
+    borderRadius: 8,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 95, 31, 0.3)',
+    marginBottom: 20,
+  },
+  quickActionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  quickActionTitle: {
+    color: Colors.neonOrange,
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  quickActionSubtitle: {
+    color: 'rgba(255, 95, 31, 0.7)',
+    fontSize: 10,
     fontWeight: 'bold',
   },
   schematicContainer: {
