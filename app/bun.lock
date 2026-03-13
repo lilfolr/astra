@@ -7,7 +7,7 @@
       "dependencies": {
         "@react-native-firebase/app": "^23.8.8",
         "@react-native-firebase/auth": "^23.8.8",
-        "@react-native-firebase/firestore": "^23.8.6",
+        "@react-native-firebase/firestore": "^23.8.8",
         "@react-native/new-app-screen": "0.84.1",
         "@react-navigation/native": "^7.1.33",
         "@react-navigation/stack": "^7.8.5",
@@ -555,7 +555,7 @@
 
     "@react-native-firebase/auth": ["@react-native-firebase/auth@23.8.8", "", { "dependencies": { "plist": "^3.1.0" }, "peerDependencies": { "@react-native-firebase/app": "23.8.8", "expo": ">=47.0.0" }, "optionalPeers": ["expo"] }, "sha512-2X067hMAW07O1vKvQh5LtnvlCNfgoKOFXeStTurhnA3+BslkASJwKzjs0qUvnE8RJ7R2YltiF/E+nJfplOKDuQ=="],
 
-    "@react-native-firebase/firestore": ["@react-native-firebase/firestore@23.8.6", "", { "dependencies": { "react-native-url-polyfill": "3.0.0" }, "peerDependencies": { "@react-native-firebase/app": "23.8.6" } }, "sha512-HizsBB/JB8m+bE282sv0KikSQ67lgx24Ldwkw5VTD0IyO6CnD4sStaFxxA5Twk3Lu+VyLTDd+1TgTgxk9oXa0g=="],
+    "@react-native-firebase/firestore": ["@react-native-firebase/firestore@23.8.8", "", { "dependencies": { "react-native-url-polyfill": "3.0.0" }, "peerDependencies": { "@react-native-firebase/app": "23.8.8" } }, "sha512-oGD7EN/NHEz/U5GJNJVZtUF17G4hCp36uB4kjdJ6+UCFn+vgfGS/uMio2kXCMVBO6bmgI2qbfClWryirZ3xmcQ=="],
 
     "@react-native/assets-registry": ["@react-native/assets-registry@0.84.1", "", {}, "sha512-lAJ6PDZv95FdT9s9uhc9ivhikW1Zwh4j9XdXM7J2l4oUA3t37qfoBmTSDLuPyE3Bi+Xtwa11hJm0BUTT2sc/gg=="],
 
