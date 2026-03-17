@@ -46,7 +46,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/eslint-parser": "^7.28.6",
-    "@babel/preset-env": "^7.25.3",
+    "@babel/preset-env": "^7.29.2",
     "@babel/runtime": "^7.29.2",
     "@react-native-community/cli": "20.1.2",
     "@react-native-community/cli-platform-android": "20.1.2",
