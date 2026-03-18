@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { getAuth } from '@react-native-firebase/auth';
+import {
+  getFirestore,
+  query,
+  collectionGroup,
+  where,
+  limit,
+  getDocs,
+  getDoc,
+} from '@react-native-firebase/firestore';
+import * as v from 'valibot';
 import { starshipService } from '../services/starshipService';
+import { StarshipSchema } from '../models';
 
 /**
  * Hook to discover the starship ID for the current authenticated user.
@@ -29,17 +40,40 @@ export function useDiscoverStarship() {
             );
 
             // 3. If not a captain, try crew lookup
+            let crewMemberId: string | undefined;
             if (!starship) {
-              starship = await starshipService.getStarshipByCrewUid(
-                currentUser.uid,
+              // We need the crew document ID to verify the mapping creation
+              const q = query(
+                collectionGroup(getFirestore(), 'crew'),
+                where('uid', '==', currentUser.uid),
+                limit(1),
               );
+              const snapshot = await getDocs(q);
+              if (!snapshot.empty) {
+                const crewDoc = snapshot.docs[0];
+                crewMemberId = crewDoc.id;
+                const starshipDocRef = crewDoc.ref.parent.parent;
+                if (starshipDocRef) {
+                  const starshipSnapshot = await getDoc(starshipDocRef);
+                  if (starshipSnapshot.exists()) {
+                    starship = v.parse(StarshipSchema, {
+                      ...(starshipSnapshot.data() as object),
+                      starshipId: starshipSnapshot.id,
+                    });
+                  }
+                }
+              }
             }
 
             sid = starship?.starshipId || currentUser.uid;
 
             // 4. Establish the mapping for future fast lookups
             try {
-              await starshipService.linkUserToStarship(currentUser.uid, sid);
+              await starshipService.linkUserToStarship(
+                currentUser.uid,
+                sid,
+                crewMemberId,
+              );
             } catch (linkErr) {
               console.error('Error linking user to starship:', linkErr);
             }
