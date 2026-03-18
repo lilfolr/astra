@@ -18,7 +18,8 @@ import SciFiButton from '../components/SciFiButton';
 import SciFiInput from '../components/SciFiInput';
 import Colors from '../theme/colors';
 import { ArrowLeft, Trash2, ClipboardList, Plus, X } from 'lucide-react-native';
-import { starshipService, useModules, type Mission } from '../data';
+import { starshipService, useModules, useCrew, type Mission } from '../data';
+import { getAuth } from '@react-native-firebase/auth';
 import * as v from 'valibot';
 import { MissionSchema } from '../data/models/schemas';
 
@@ -46,6 +47,12 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const isEditing = !!existingMission;
 
   const { modules } = useModules(starshipId);
+  const { crew } = useCrew(starshipId);
+  const currentUser = getAuth().currentUser;
+
+  const isCaptain =
+    crew.find(c => c.uid === currentUser?.uid)?.role === 'captain' ||
+    existingMission === undefined; // If adding, assume captain for now as per app flow
 
   const [title, setTitle] = useState(existingMission?.title || '');
   const [description, setDescription] = useState(
@@ -63,6 +70,9 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
       : false,
   );
   const [moduleId, setModuleId] = useState(existingMission?.moduleId || '');
+  const [assignedTo, setAssignedTo] = useState(
+    existingMission?.assignedTo || '',
+  );
   const [tasks, setTasks] = useState(existingMission?.tasks || []);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -85,14 +95,23 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
   const handleSave = async () => {
     setLoading(true);
     try {
+      let missionStatus = existingMission?.status || 'pending';
+      if (!isEditing) {
+        missionStatus = assignedTo ? 'active' : 'pending';
+      } else if (missionStatus === 'pending' && assignedTo) {
+        missionStatus = 'active';
+      } else if (missionStatus === 'active' && !assignedTo) {
+        missionStatus = 'pending';
+      }
+
       const missionData = {
         title,
         description,
         difficulty,
         creditReward: parseInt(creditReward, 10),
         moduleId,
-        assignedTo: existingMission?.assignedTo || '',
-        status: existingMission?.status || 'pending',
+        assignedTo,
+        status: missionStatus,
         tasks: tasks,
       };
 
@@ -236,6 +255,57 @@ const MissionFormScreen: React.FC<Props> = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </View>
+
+          {isCaptain && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <View style={styles.sectionLine} />
+                <Text style={styles.sectionTitle}>ASSIGN TO</Text>
+                <View style={styles.sectionLine} />
+              </View>
+
+              <View style={styles.moduleGrid}>
+                <TouchableOpacity
+                  style={[
+                    styles.moduleItem,
+                    assignedTo === '' && styles.moduleItemActive,
+                  ]}
+                  onPress={() => setAssignedTo('')}
+                >
+                  <Text
+                    style={[
+                      styles.moduleItemText,
+                      assignedTo === '' && styles.moduleItemTextActive,
+                    ]}
+                  >
+                    UNASSIGNED
+                  </Text>
+                </TouchableOpacity>
+                {crew
+                  .filter(member => member.uid && member.name)
+                  .map(member => (
+                    <TouchableOpacity
+                      key={member.uid}
+                      style={[
+                        styles.moduleItem,
+                        assignedTo === member.uid && styles.moduleItemActive,
+                      ]}
+                      onPress={() => setAssignedTo(member.uid!)}
+                    >
+                      <Text
+                        style={[
+                          styles.moduleItemText,
+                          assignedTo === member.uid &&
+                            styles.moduleItemTextActive,
+                        ]}
+                      >
+                        {(member.name || '').toUpperCase()}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            </View>
+          )}
 
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
