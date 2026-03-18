@@ -22,6 +22,7 @@ import MissionsScreen from './screens/MissionsScreen';
 import MissionFormScreen from './screens/MissionFormScreen';
 import ShopScreen from './screens/ShopScreen';
 import ShopItemFormScreen from './screens/ShopItemFormScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import { Module, Mission, ShopItem } from './data/models/schemas';
 
 export type AuthStackParamList = {
@@ -38,6 +39,7 @@ export type AuthStackParamList = {
   Missions: undefined;
   Shop: undefined;
   ShopItemForm: { starshipId: string; item?: ShopItem & { id: string } };
+  Settings: undefined;
 };
 
 const Stack = createStackNavigator<AuthStackParamList>();
@@ -82,6 +84,7 @@ function App() {
                 name="CreateProfile"
                 component={CreateProfileScreen}
               />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
             </>
           ) : (
             /* Unauthenticated Stack */
